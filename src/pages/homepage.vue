@@ -69,7 +69,7 @@ const systemItems = [
     <v-app>
 
         <!-- SIDEBAR -->
-        <v-navigation-drawer v-model="drawer" :width="270" elevation="1">
+        <v-navigation-drawer v-model="drawer" :width="270" elevation="1" permanent>
             <!-- Logo / Brand -->
             <div class="pa-5">
                 <div class="d-flex align-center">
@@ -159,15 +159,15 @@ const systemItems = [
             <v-spacer />
 
             <!-- Search -->
-            <v-text-field class="mr-3 d-none d-md-flex" prepend-inner-icon="mdi-magnify" placeholder="Search assets..."
+            <v-text-field class="mr-3" prepend-inner-icon="mdi-magnify" placeholder="Search assets..."
                 variant="solo-filled" density="compact" hide-details single-line style="max-width: 280px" />
 
             <!-- Notifications -->
-            <v-btn icon variant="text" class="mr-1">
+            <!-- <v-btn icon variant="text" class="mr-1">
                 <v-badge color="error" content="3" floating>
                     <v-icon icon="mdi-bell-outline" />
                 </v-badge>
-            </v-btn>
+            </v-btn> -->
 
             <!-- User Menu -->
             <v-menu>
@@ -205,7 +205,7 @@ const systemItems = [
         </v-app-bar>
 
         <!-- MAIN CONTENT -->
-        <v-main>
+        <v-main class="main-content">
             <v-container fluid class="pa-0">
                 <router-view />
             </v-container>
@@ -213,3 +213,17 @@ const systemItems = [
 
     </v-app>
 </template>
+<style>
+html,
+body,
+#app {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+.main-content {
+    height: 100vh;
+    overflow-y: auto;
+}
+</style>

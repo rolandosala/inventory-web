@@ -38,60 +38,65 @@ const router = createRouter({
           name: 'assets-view',
           component: () => import('@/pages/assetview.vue'),
         },
-        /*
+
         {
           path: 'maintenance',
           name: 'maintenance',
-          component: () => import('@/views/Maintenance.vue'),
+          component: () => import('@/pages/maintenance.vue'),
         },
 
         {
           path: 'categories',
           name: 'categories',
-          component: () => import('@/views/Categories.vue'),
+          component: () => import('@/pages/categories.vue'),
         },
 
         {
           path: 'departments',
           name: 'departments',
-          component: () => import('@/views/Departments.vue'),
+          component: () => import('@/pages/departments.vue'),
         },
 
         {
           path: 'locations',
           name: 'locations',
-          component: () => import('@/views/Locations.vue'),
+          component: () => import('@/pages/locations.vue'),
         },
 
         {
           path: 'suppliers',
           name: 'suppliers',
-          component: () => import('@/views/Suppliers.vue'),
+          component: () => import('@/pages/suppliers.vue'),
         },
 
         {
           path: 'software',
           name: 'software',
-          component: () => import('@/views/Software.vue'),
+          component: () => import('@/pages/softwares.vue'),
         },
 
         {
           path: 'reports',
           name: 'reports',
-          component: () => import('@/views/Reports.vue'),
+          component: () => import('@/pages/reports.vue'),
         },
 
         {
           path: 'users',
           name: 'users',
-          component: () => import('@/views/Users.vue'),
+          component: () => import('@/pages/users.vue'),
         },
 
         {
           path: 'settings',
           name: 'settings',
-          component: () => import('@/views/Settings.vue'),
-        }, */
+          component: () => import('@/pages/settings.vue'),
+        },
+        {
+          path: 'profile',
+          name: 'profile',
+          component: () => import('@/pages/profile.vue'),
+        },
       ]
     },
 
