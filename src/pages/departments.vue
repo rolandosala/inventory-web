@@ -1,3 +1,4 @@
+
 <template>
     <v-container fluid class="pa-6">
         <!-- Header -->
@@ -390,7 +391,8 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
+import api from '@/api/axios'
 
 const search = ref('')
 const statusFilter = ref('All')
@@ -406,7 +408,25 @@ const snackbar = ref(false)
 const snackbarMessage = ref('')
 const snackbarColor = ref('success')
 
-const departments = ref([
+
+const departments = ref([])
+
+const fetchDepartments = async () => {
+    try {
+        const response = await api.get('/departments')
+        departments.value = response.data.data ?? response.data
+        console.log(departments.value)
+
+    } catch (error) {
+        console.error('Failed to fetch departments:', error)
+    }
+}
+
+onMounted(() => {
+    fetchDepartments()
+})
+
+/* const departments = ref([
     {
         id: 1,
         code: 'ICT',
@@ -517,7 +537,7 @@ const departments = ref([
         status: 'Inactive',
         created_at: '2025-01-10',
     },
-])
+]) */
 
 const formData = ref({
     code: '',

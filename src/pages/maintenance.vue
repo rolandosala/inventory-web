@@ -14,36 +14,17 @@
         </p>
       </div>
 
-      <v-btn
-        color="primary"
-        prepend-icon="mdi-plus"
-        @click="openCreateDialog"
-      >
+      <v-btn color="primary" prepend-icon="mdi-plus" @click="openCreateDialog">
         Add Maintenance Record
       </v-btn>
     </div>
 
     <!-- Summary Cards -->
     <v-row class="mb-2">
-      <v-col
-        v-for="stat in summaryCards"
-        :key="stat.title"
-        cols="12"
-        sm="6"
-        md="3"
-      >
-        <v-card
-          rounded="lg"
-          elevation="1"
-          class="pa-4"
-        >
+      <v-col v-for="stat in summaryCards" :key="stat.title" cols="12" sm="6" md="3">
+        <v-card rounded="lg" elevation="1" class="pa-4">
           <div class="d-flex align-center">
-            <v-avatar
-              :color="stat.color"
-              variant="tonal"
-              size="48"
-              class="mr-4"
-            >
+            <v-avatar :color="stat.color" variant="tonal" size="48" class="mr-4">
               <v-icon>{{ stat.icon }}</v-icon>
             </v-avatar>
 
@@ -62,55 +43,28 @@
     </v-row>
 
     <!-- Filters -->
-    <v-card
-      rounded="lg"
-      elevation="1"
-      class="mb-6"
-    >
+    <v-card rounded="lg" elevation="1" class="mb-6">
       <v-card-text>
         <v-row align="center">
           <v-col cols="12" md="5">
-            <v-text-field
-              v-model="search"
-              label="Search maintenance records"
-              placeholder="Asset tag, item, technician..."
-              prepend-inner-icon="mdi-magnify"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-              clearable
-            />
+            <v-text-field v-model="search" label="Search maintenance records"
+              placeholder="Asset tag, item, technician..." prepend-inner-icon="mdi-magnify" variant="outlined"
+              density="comfortable" hide-details clearable />
           </v-col>
 
           <v-col cols="12" sm="6" md="3">
-            <v-select
-              v-model="typeFilter"
-              label="Maintenance Type"
-              :items="['All', 'Preventive', 'Corrective', 'Inspection']"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-            />
+            <v-select v-model="typeFilter" label="Maintenance Type"
+              :items="['All', 'Preventive', 'Corrective', 'Inspection']" variant="outlined" density="comfortable"
+              hide-details />
           </v-col>
 
           <v-col cols="12" sm="6" md="3">
-            <v-select
-              v-model="statusFilter"
-              label="Status"
-              :items="['All', 'Completed', 'In Progress', 'Pending']"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-            />
+            <v-select v-model="statusFilter" label="Status" :items="['All', 'Completed', 'In Progress', 'Pending']"
+              variant="outlined" density="comfortable" hide-details />
           </v-col>
 
           <v-col cols="12" md="1">
-            <v-btn
-              icon="mdi-filter-remove-outline"
-              variant="text"
-              size="large"
-              @click="clearFilters"
-            >
+            <v-btn icon="mdi-filter-remove-outline" variant="text" size="large" @click="clearFilters">
               <v-icon>mdi-filter-remove-outline</v-icon>
 
               <v-tooltip activator="parent">
@@ -123,26 +77,16 @@
     </v-card>
 
     <!-- Maintenance Table -->
-    <v-card
-      rounded="lg"
-      elevation="1"
-    >
+    <v-card rounded="lg" elevation="1">
       <v-card-title class="pa-5">
         <div class="d-flex align-center">
-          <v-icon
-            icon="mdi-wrench-outline"
-            class="mr-3"
-          />
+          <v-icon icon="mdi-wrench-outline" class="mr-3" />
 
           <span class="text-subtitle-1 font-weight-bold">
             Maintenance Records
           </span>
 
-          <v-chip
-            class="ml-3"
-            size="small"
-            variant="tonal"
-          >
+          <v-chip class="ml-3" size="small" variant="tonal">
             {{ filteredRecords.length }} records
           </v-chip>
         </div>
@@ -150,12 +94,7 @@
 
       <v-divider />
 
-      <v-data-table
-        :headers="headers"
-        :items="filteredRecords"
-        :items-per-page="10"
-        hover
-      >
+      <v-data-table :headers="headers" :items="filteredRecords" :items-per-page="10" hover>
 
         <!-- Asset -->
         <template #item.asset="{ item }">
@@ -171,27 +110,16 @@
         </template>
 
         <!-- Maintenance Type -->
-        <template #item.type="{ item }">
-          <v-chip
-            :color="typeColor(item.type)"
-            size="small"
-            variant="tonal"
-          >
-            {{ item.type }}
+        <template #item.maintenance_type="{ item }">
+          <v-chip :color="typeColor(item.maintenance_type)" size="small" variant="tonal">
+            {{ item.maintenance_type }}
           </v-chip>
         </template>
 
         <!-- Status -->
         <template #item.status="{ item }">
-          <v-chip
-            :color="statusColor(item.status)"
-            size="small"
-            variant="tonal"
-          >
-            <v-icon
-              start
-              size="14"
-            >
+          <v-chip :color="statusColor(item.status)" size="small" variant="tonal">
+            <v-icon start size="14">
               {{ statusIcon(item.status) }}
             </v-icon>
 
@@ -207,13 +135,7 @@
         <!-- Actions -->
         <template #item.actions="{ item }">
           <div class="d-flex justify-end">
-            <v-btn
-              icon
-              variant="text"
-              size="small"
-              color="primary"
-              @click="viewRecord(item)"
-            >
+            <v-btn icon variant="text" size="small" color="primary" @click="viewRecord(item)">
               <v-icon>mdi-eye-outline</v-icon>
 
               <v-tooltip activator="parent">
@@ -221,12 +143,7 @@
               </v-tooltip>
             </v-btn>
 
-            <v-btn
-              icon
-              variant="text"
-              size="small"
-              @click="editRecord(item)"
-            >
+            <v-btn icon variant="text" size="small" @click="editRecord(item)">
               <v-icon>mdi-pencil-outline</v-icon>
 
               <v-tooltip activator="parent">
@@ -234,13 +151,7 @@
               </v-tooltip>
             </v-btn>
 
-            <v-btn
-              icon
-              variant="text"
-              size="small"
-              color="error"
-              @click="deleteRecord(item)"
-            >
+            <v-btn icon variant="text" size="small" color="error" @click="deleteRecord(item)">
               <v-icon>mdi-delete-outline</v-icon>
 
               <v-tooltip activator="parent">
@@ -254,19 +165,12 @@
     </v-card>
 
     <!-- Create / Edit Dialog -->
-    <v-dialog
-      v-model="dialog"
-      max-width="750"
-    >
+    <v-dialog v-model="dialog" max-width="750">
       <v-card rounded="lg">
 
         <v-card-title class="pa-5">
           <div class="d-flex align-center">
-            <v-avatar
-              color="primary"
-              variant="tonal"
-              class="mr-3"
-            >
+            <v-avatar color="primary" variant="tonal" class="mr-3">
               <v-icon>mdi-wrench-outline</v-icon>
             </v-avatar>
 
@@ -290,95 +194,46 @@
             <v-row>
 
               <v-col cols="12" md="6">
-                <v-select
-                  v-model="formData.asset_tag"
-                  label="Asset"
-                  :items="assetOptions"
-                  variant="outlined"
-                  density="comfortable"
-                  prepend-inner-icon="mdi-monitor"
-                />
+                <v-autocomplete v-model="formData.asset.asset_tag" label="Asset" :items="assetOptions"
+                  variant="outlined" density="comfortable" prepend-inner-icon="mdi-monitor" clearable />
               </v-col>
 
               <v-col cols="12" md="6">
-                <v-select
-                  v-model="formData.type"
-                  label="Maintenance Type"
-                  :items="['Preventive', 'Corrective', 'Inspection']"
-                  variant="outlined"
-                  density="comfortable"
-                  prepend-inner-icon="mdi-wrench-outline"
-                />
+                <v-select v-model="formData.maintenance_type" label="Maintenance Type"
+                  :items="['Preventive', 'Corrective', 'Inspection']" variant="outlined" density="comfortable"
+                  prepend-inner-icon="mdi-wrench-outline" />
               </v-col>
 
               <v-col cols="12" md="6">
-                <v-text-field
-                  v-model="formData.date"
-                  label="Maintenance Date"
-                  type="date"
-                  variant="outlined"
-                  density="comfortable"
-                  prepend-inner-icon="mdi-calendar-outline"
-                />
+                <v-text-field v-model="formData.date_started" label="Maintenance Date" type="date" variant="outlined"
+                  density="comfortable" prepend-inner-icon="mdi-calendar-outline" />
               </v-col>
 
               <v-col cols="12" md="6">
-                <v-select
-                  v-model="formData.status"
-                  label="Status"
-                  :items="['Completed', 'In Progress', 'Pending']"
-                  variant="outlined"
-                  density="comfortable"
-                  prepend-inner-icon="mdi-list-status"
-                />
+                <v-select v-model="formData.status" label="Status" :items="['Completed', 'In Progress', 'Pending']"
+                  variant="outlined" density="comfortable" prepend-inner-icon="mdi-list-status" />
               </v-col>
 
               <v-col cols="12" md="6">
-                <v-text-field
-                  v-model="formData.technician"
-                  label="Technician"
-                  placeholder="Technician / ICT Personnel"
-                  variant="outlined"
-                  density="comfortable"
-                  prepend-inner-icon="mdi-account-wrench-outline"
-                />
+                <v-text-field v-model="formData.technician_id" label="Technician"
+                  placeholder="Technician / ICT Personnel" variant="outlined" density="comfortable"
+                  prepend-inner-icon="mdi-account-wrench-outline" />
               </v-col>
 
               <v-col cols="12" md="6">
-                <v-text-field
-                  v-model.number="formData.cost"
-                  label="Maintenance Cost"
-                  type="number"
-                  prefix="₱"
-                  min="0"
-                  variant="outlined"
-                  density="comfortable"
-                  prepend-inner-icon="mdi-cash"
-                />
+                <v-text-field v-model.number="formData.cost" label="Maintenance Cost" type="number" prefix="₱" min="0"
+                  variant="outlined" density="comfortable" prepend-inner-icon="mdi-cash" />
               </v-col>
 
               <v-col cols="12">
-                <v-textarea
-                  v-model="formData.description"
-                  label="Maintenance Description"
-                  placeholder="Describe the maintenance performed..."
-                  variant="outlined"
-                  density="comfortable"
-                  rows="3"
-                  prepend-inner-icon="mdi-text-box-outline"
-                />
+                <v-textarea v-model="formData.problem_description" label="Maintenance Description"
+                  placeholder="Describe the maintenance performed..." variant="outlined" density="comfortable" rows="3"
+                  prepend-inner-icon="mdi-text-box-outline" />
               </v-col>
 
               <v-col cols="12">
-                <v-textarea
-                  v-model="formData.remarks"
-                  label="Remarks"
-                  placeholder="Additional notes..."
-                  variant="outlined"
-                  density="comfortable"
-                  rows="2"
-                  prepend-inner-icon="mdi-note-text-outline"
-                />
+                <v-textarea v-model="formData.remarks" label="Remarks" placeholder="Additional notes..."
+                  variant="outlined" density="comfortable" rows="2" prepend-inner-icon="mdi-note-text-outline" />
               </v-col>
 
             </v-row>
@@ -391,18 +246,11 @@
         <v-card-actions class="pa-5">
           <v-spacer />
 
-          <v-btn
-            variant="outlined"
-            @click="dialog = false"
-          >
+          <v-btn variant="outlined" @click="dialog = false">
             Cancel
           </v-btn>
 
-          <v-btn
-            color="primary"
-            prepend-icon="mdi-content-save"
-            @click="saveRecord"
-          >
+          <v-btn color="primary" prepend-icon="mdi-content-save" @click="saveRecord">
             {{ editing ? 'Update Record' : 'Save Record' }}
           </v-btn>
         </v-card-actions>
@@ -411,21 +259,11 @@
     </v-dialog>
 
     <!-- View Dialog -->
-    <v-dialog
-      v-model="viewDialog"
-      max-width="650"
-    >
-      <v-card
-        v-if="selectedRecord"
-        rounded="lg"
-      >
+    <v-dialog v-model="viewDialog" max-width="650">
+      <v-card v-if="selectedRecord" rounded="lg">
         <v-card-title class="pa-5">
           <div class="d-flex align-center">
-            <v-avatar
-              color="primary"
-              variant="tonal"
-              class="mr-3"
-            >
+            <v-avatar color="primary" variant="tonal" class="mr-3">
               <v-icon>mdi-wrench-outline</v-icon>
             </v-avatar>
 
@@ -435,7 +273,7 @@
               </div>
 
               <div class="text-caption text-medium-emphasis">
-                {{ selectedRecord.asset_tag }}
+                {{ selectedRecord.asset.asset_tag }}
               </div>
             </div>
           </div>
@@ -452,11 +290,11 @@
               </div>
 
               <div class="font-weight-medium">
-                {{ selectedRecord.asset_tag }}
+                {{ selectedRecord.asset.asset_tag }}
               </div>
 
               <div class="text-caption">
-                {{ selectedRecord.item_name }}
+                {{ selectedRecord.asset.item_name }}
               </div>
             </v-col>
 
@@ -465,13 +303,8 @@
                 Maintenance Type
               </div>
 
-              <v-chip
-                :color="typeColor(selectedRecord.type)"
-                size="small"
-                variant="tonal"
-                class="mt-1"
-              >
-                {{ selectedRecord.type }}
+              <v-chip :color="typeColor(selectedRecord.type)" size="small" variant="tonal" class="mt-1">
+                {{ selectedRecord.maintenance_type }}
               </v-chip>
             </v-col>
 
@@ -481,7 +314,7 @@
               </div>
 
               <div class="font-weight-medium">
-                {{ selectedRecord.date }}
+                {{ selectedRecord.date_reported }}
               </div>
             </v-col>
 
@@ -490,12 +323,7 @@
                 Status
               </div>
 
-              <v-chip
-                :color="statusColor(selectedRecord.status)"
-                size="small"
-                variant="tonal"
-                class="mt-1"
-              >
+              <v-chip :color="statusColor(selectedRecord.status)" size="small" variant="tonal" class="mt-1">
                 {{ selectedRecord.status }}
               </v-chip>
             </v-col>
@@ -506,11 +334,11 @@
               </div>
 
               <div class="font-weight-medium">
-                {{ selectedRecord.technician }}
+                {{ selectedRecord.technician_id }}
               </div>
             </v-col>
 
-            <v-col cols="12" sm="6">
+            <!--    <v-col cols="12" sm="6">
               <div class="text-caption text-medium-emphasis">
                 Cost
               </div>
@@ -518,7 +346,7 @@
               <div class="font-weight-medium">
                 {{ formatCurrency(selectedRecord.cost) }}
               </div>
-            </v-col>
+            </v-col> -->
 
             <v-col cols="12">
               <v-divider class="my-2" />
@@ -530,7 +358,7 @@
               </div>
 
               <div class="mt-1">
-                {{ selectedRecord.description }}
+                {{ selectedRecord.problem_description }}
               </div>
             </v-col>
 
@@ -551,10 +379,7 @@
         <v-card-actions class="pa-5">
           <v-spacer />
 
-          <v-btn
-            variant="outlined"
-            @click="viewDialog = false"
-          >
+          <v-btn variant="outlined" @click="viewDialog = false">
             Close
           </v-btn>
         </v-card-actions>
@@ -562,10 +387,7 @@
     </v-dialog>
 
     <!-- Delete Confirmation -->
-    <v-dialog
-      v-model="deleteDialog"
-      max-width="450"
-    >
+    <v-dialog v-model="deleteDialog" max-width="450">
       <v-card rounded="lg">
 
         <v-card-title class="pa-5">
@@ -574,7 +396,7 @@
 
         <v-card-text>
           Are you sure you want to delete the maintenance record for
-          <strong>{{ selectedRecord?.asset_tag }}</strong>?
+          <strong>{{ selectedRecord?.asset.asset_tag }}</strong>?
           <br />
           This is only a frontend demo and will not affect the database.
         </v-card-text>
@@ -582,18 +404,11 @@
         <v-card-actions class="pa-5">
           <v-spacer />
 
-          <v-btn
-            variant="outlined"
-            @click="deleteDialog = false"
-          >
+          <v-btn variant="outlined" @click="deleteDialog = false">
             Cancel
           </v-btn>
 
-          <v-btn
-            color="error"
-            prepend-icon="mdi-delete-outline"
-            @click="confirmDelete"
-          >
+          <v-btn color="error" prepend-icon="mdi-delete-outline" @click="deleteAsset(selectedRecord)">
             Delete
           </v-btn>
         </v-card-actions>
@@ -602,19 +417,11 @@
     </v-dialog>
 
     <!-- Snackbar -->
-    <v-snackbar
-      v-model="snackbar"
-      :color="snackbarColor"
-      location="top right"
-      :timeout="3000"
-    >
+    <v-snackbar v-model="snackbar" :color="snackbarColor" location="top right" :timeout="3000">
       {{ snackbarMessage }}
 
       <template #actions>
-        <v-btn
-          variant="text"
-          @click="snackbar = false"
-        >
+        <v-btn variant="text" @click="snackbar = false">
           Close
         </v-btn>
       </template>
@@ -624,7 +431,9 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import api from '@/api/axios'
 
 const search = ref('')
 const typeFilter = ref('All')
@@ -641,7 +450,28 @@ const snackbar = ref(false)
 const snackbarMessage = ref('')
 const snackbarColor = ref('success')
 
-const records = ref([
+const records = ref([])
+const loading = ref(false)
+const route = useRoute()
+
+const fetchRecords = async () => {
+  loading.value = true
+
+  try {
+    const response = await api.get('/maintenance')
+
+    records.value = response.data.data
+  } catch (error) {
+    console.error('Failed to load assets:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchRecords()
+})
+/* const records = ref([
   {
     id: 1,
     asset_tag: 'ICT-2026-001',
@@ -726,7 +556,7 @@ const records = ref([
     description: 'Port utilization and temperature inspection.',
     remarks: 'No abnormal conditions found.',
   },
-])
+]) */
 
 const formData = ref({
   asset_tag: '',
@@ -742,28 +572,22 @@ const formData = ref({
 const headers = [
   {
     title: 'Asset',
-    key: 'asset',
+    key: 'asset.asset_tag',
     sortable: true,
   },
   {
     title: 'Type',
-    key: 'type',
+    key: 'maintenance_type',
     sortable: true,
   },
   {
     title: 'Date',
-    key: 'date',
+    key: 'date_reported',
     sortable: true,
   },
   {
     title: 'Technician',
-    key: 'technician',
-    sortable: true,
-  },
-  {
-    title: 'Cost',
-    key: 'cost',
-    align: 'end',
+    key: 'technician_id',
     sortable: true,
   },
   {
@@ -803,20 +627,17 @@ const summaryCards = computed(() => [
     color: 'warning',
   },
   {
-    title: 'Total Cost',
-    value: formatCurrency(
-      records.value.reduce(
-        (total, item) => total + Number(item.cost || 0),
-        0
-      )
-    ),
+    title: 'Unserviceable',
+    value: records.value.filter(
+      item => item.status === 'In Progress'
+    ).length,
     icon: 'mdi-cash-multiple',
     color: 'secondary',
   },
 ])
 
 const assetOptions = computed(() =>
-  [...new Set(records.value.map(item => item.asset_tag))]
+  [...new Set(records.value.map(item => item.asset.asset_tag))]
 )
 
 const filteredRecords = computed(() => {
@@ -831,7 +652,7 @@ const filteredRecords = computed(() => {
 
     const matchesType =
       typeFilter.value === 'All' ||
-      item.type === typeFilter.value
+      item.maintenance_type === typeFilter.value
 
     const matchesStatus =
       statusFilter.value === 'All' ||
@@ -919,6 +740,7 @@ const editRecord = record => {
   }
 
   dialog.value = true
+  console.log(formData.value)
 }
 
 const viewRecord = record => {
@@ -946,6 +768,23 @@ const confirmDelete = () => {
   selectedRecord.value = null
 }
 
+const deleteAsset = async (asset) => {
+  try {
+    await api.delete(`/maintenance/${asset.id}`)
+
+    // Remove from current table
+    assets.value = assets.value.filter(
+      item => item.id !== asset.id
+    )
+  } catch (error) {
+    console.error('Failed to delete asset:', error)
+
+    alert(
+      error.response?.data?.message ||
+      'Failed to delete asset.'
+    )
+  }
+}
 const saveRecord = () => {
   if (!formData.value.asset_tag) {
     showSnackbar(

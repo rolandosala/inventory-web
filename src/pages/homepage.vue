@@ -1,5 +1,18 @@
 <script setup>
 import { ref } from 'vue'
+import { logout } from '@/services/auth'
+import { computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
+import { onMounted } from 'vue'
+
+const router = useRouter()
+const auth = useAuthStore()
+onMounted(async () => {
+    console.log('Token:', auth.token)
+
+    await auth.fetchUser()
+})
 
 const drawer = ref(true)
 
@@ -7,37 +20,39 @@ const menuItems = [
     {
         title: 'Dashboard',
         icon: 'mdi-view-dashboard-outline',
-        to: '/',
+        to: 'dashboard',
     },
     {
         title: 'Assets',
         icon: 'mdi-laptop',
-        to: '/assets',
+        to: 'assets',
+        permission: 'assets.view',
     },
     {
         title: 'Maintenance',
         icon: 'mdi-wrench-outline',
-        to: '/maintenance',
+        to: 'maintenance',
+        permission: 'maintenance.view',
     },
     {
         title: 'Categories',
         icon: 'mdi-shape-outline',
-        to: '/categories',
+        to: 'categories',
     },
     {
         title: 'Departments',
         icon: 'mdi-office-building-outline',
-        to: '/departments',
+        to: 'departments',
     },
     {
         title: 'Locations',
         icon: 'mdi-map-marker-outline',
-        to: '/locations',
+        to: 'locations',
     },
     {
         title: 'Suppliers',
         icon: 'mdi-truck-outline',
-        to: '/suppliers',
+        to: 'suppliers',
     },
 ]
 
@@ -45,24 +60,71 @@ const systemItems = [
     {
         title: 'Software',
         icon: 'mdi-application-cog-outline',
-        to: '/software',
+        to: 'software',
     },
     {
         title: 'Reports',
         icon: 'mdi-file-chart-outline',
-        to: '/reports',
+        to: 'reports',
     },
     {
         title: 'Users',
         icon: 'mdi-account-group-outline',
-        to: '/users',
+        to: 'users',
+        permission: 'users.view'
     },
     {
         title: 'Settings',
         icon: 'mdi-cog-outline',
-        to: '/settings',
+        to: 'settings',
     },
 ]
+
+
+const user = computed(() => auth.user)
+
+const userName = computed(() => {
+    return user.value?.name ?? 'User'
+})
+
+const userEmail = computed(() => {
+    return user.value?.email ?? ''
+})
+
+const userRole = computed(() => {
+    return user.value?.roles[0] ?? 'No Role'
+})
+
+async function handleLogout() {
+    try {
+        await logout()
+    } catch (error) {
+        console.error('Logout error:', error)
+    }
+
+    router.push('/')
+}
+
+const visibleMenuItems = computed(() => {
+    return menuItems.filter(item => {
+        if (!item.permission) {
+            return true
+        }
+
+        return auth.hasPermission(item.permission)
+    })
+})
+
+const visibleSystemItems = computed(() => {
+    return systemItems.filter(item => {
+        if (!item.permission) {
+            return true
+        }
+
+        return auth.hasPermission(item.permission)
+    })
+})
+
 </script>
 
 <template>
@@ -100,15 +162,15 @@ const systemItems = [
                     MAIN
                 </v-list-subheader>
 
-                <v-list-item v-for="item in menuItems" :key="item.title" :to="item.to" :prepend-icon="item.icon"
-                    :title="item.title" rounded="lg" class="mb-1" />
+                <v-list-item v-for="item in visibleMenuItems" :key="item.title" :to="{ name: item.to }"
+                    :prepend-icon="item.icon" :title="item.title" rounded="lg" class="mb-1" />
 
                 <v-list-subheader class="mt-4">
                     SYSTEM
                 </v-list-subheader>
 
-                <v-list-item v-for="item in systemItems" :key="item.title" :to="item.to" :prepend-icon="item.icon"
-                    :title="item.title" rounded="lg" class="mb-1" />
+                <v-list-item v-for="item in visibleSystemItems" :key="item.title" :to="{ name: item.to }"
+                    :prepend-icon="item.icon" :title="item.title" rounded="lg" class="mb-1" />
 
             </v-list>
 
@@ -129,11 +191,11 @@ const systemItems = [
                         </template>
 
                         <v-list-item-title class="font-weight-medium">
-                            ICT Technician
+                            {{ userName }}
                         </v-list-item-title>
 
                         <v-list-item-subtitle>
-                            Administrator
+                            {{ userRole }}
                         </v-list-item-subtitle>
 
                         <template #append>
@@ -181,7 +243,7 @@ const systemItems = [
                         </v-avatar>
 
                         <span class="ml-2 d-none d-md-block">
-                            ICT Technician
+                            {{ userName }}
                         </span>
 
                         <v-icon icon="mdi-chevron-down" class="ml-1" />
@@ -197,7 +259,7 @@ const systemItems = [
 
                     <v-divider class="my-2" />
 
-                    <v-list-item prepend-icon="mdi-logout" title="Logout" />
+                    <v-list-item prepend-icon="mdi-logout" title="Logout" @click="handleLogout" />
 
                 </v-list>
             </v-menu>

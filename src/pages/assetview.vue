@@ -1,9 +1,103 @@
 ```vue
 <script setup>
-import { computed, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import api from '@/api/axios'
+
 
 const route = useRoute()
+const router = useRouter()
+
+const loading = ref(false)
+const errorMessage = ref('')
+const loadingAsset = ref(false)
+
+const assetId = route.params.id
+console.log(assetId)
+const formData = ref({
+    asset_tag: '',
+    category_id: null,
+    supplier_id: null,
+    department_id: null,
+    location_id: null,
+    property_number: '',
+    item_name: '',
+    brand: '',
+    model: '',
+    serial_number: '',
+    specifications: '',
+    quantity: 1,
+    unit_cost: 0,
+    purchase_date: '',
+    warranty_expiry: '',
+    status: 'active',
+    condition: 'good',
+    remarks: '',
+})
+const fetchAsset = async () => {
+    loadingAsset.value = true
+    errorMessage.value = ''
+
+    try {
+        const response = await api.get(`/assets/${assetId}`)
+        const assets = response.data.data
+        console.log(assets)
+
+        formData.value = {
+            asset_tag: assets.asset_tag ?? '',
+            category_id: assets.category.name ?? '',
+            supplier_id: assets.supplier_id ?? '',
+            department_id: assets.department.name ?? '',
+            location_id: assets.location.location_name ?? '',
+            property_number: assets.property_number ?? '',
+            item_name: assets.item_name ?? '',
+            brand: assets.brand ?? '',
+            model: assets.model ?? '',
+            serial_number: assets.serial_number ?? '',
+            specifications: assets.specifications ?? '',
+            quantity: assets.quantity ?? 1,
+            unit_cost: assets.unit_cost ?? 0,
+            purchase_date: assets.purchase_date
+                ? assets.purchase_date.substring(0, 10)
+                : '',
+            warranty_expiry: assets.warranty_expiry
+                ? assets.warranty_expiry.substring(0, 10)
+                : '',
+            status: assets.status ?? 'active',
+            condition: assets.condition ?? 'good',
+            remarks: assets.remarks ?? '',
+        }
+
+
+    } catch (error) {
+        console.error('Failed to load asset:', error)
+
+        errorMessage.value =
+            error.response?.data?.message ||
+            'Failed to load formData.'
+
+    } finally {
+        loadingAsset.value = false
+    }
+}
+
+onMounted(() => {
+    fetchAsset()
+})
+
+const goBack = () => {
+    router.push('/dashboard/assets')
+}
+
+const editAsset = () => {
+    router.push({
+        name: 'assets-edit',
+        params: {
+            id: route.params.id
+        }
+    })
+}
+
 
 /*
 |--------------------------------------------------------------------------
@@ -11,7 +105,7 @@ const route = useRoute()
 |--------------------------------------------------------------------------
 */
 
-const assets = [
+/* const assets = [
     {
         id: 1,
         assetTag: 'ICT-2026-0001',
@@ -84,7 +178,7 @@ const assets = [
             'EcoTank All-in-One Printer, Wi-Fi, Print/Scan/Copy/Fax',
         remarks: 'Paper feed problem reported.',
     },
-]
+] */
 
 const maintenanceHistory = [
     {
@@ -105,12 +199,12 @@ const maintenanceHistory = [
     },
 ]
 
-const asset = computed(() => {
+/* const asset = computed(() => {
     return (
         assets.find(item => item.id === Number(route.params.id)) ||
         assets[0]
     )
-})
+}) */
 
 const showQrDialog = ref(false)
 
@@ -162,7 +256,7 @@ const formatCurrency = value => {
 
             <div class="d-flex align-center">
 
-                <v-btn icon="mdi-arrow-left" variant="text" class="mr-2" to="/assets" />
+                <v-btn icon="mdi-arrow-left" variant="text" class="mr-2" to="/dashboard/assets" />
 
                 <div>
                     <div class="text-caption text-medium-emphasis">
@@ -170,7 +264,7 @@ const formatCurrency = value => {
                     </div>
 
                     <h1 class="text-h4 font-weight-bold">
-                        {{ asset.assetTag }}
+                        {{ formData.asset_tag }}
                     </h1>
                 </div>
 
@@ -182,7 +276,7 @@ const formatCurrency = value => {
                     QR Code
                 </v-btn>
 
-                <v-btn color="primary" prepend-icon="mdi-pencil-outline" :to="`/assets/${asset.id}/edit`">
+                <v-btn color="primary" prepend-icon="mdi-pencil-outline" @click="editAsset">
                     Edit Asset
                 </v-btn>
 
@@ -207,11 +301,11 @@ const formatCurrency = value => {
                     <div class="ml-4">
 
                         <div class="text-h5 font-weight-bold">
-                            {{ asset.itemName }}
+                            {{ formData.item_name }}
                         </div>
 
                         <div class="text-body-2 text-medium-emphasis">
-                            {{ asset.brand }} {{ asset.model }}
+                            {{ formData.brand }} {{ formData.model }}
                         </div>
 
                     </div>
@@ -220,14 +314,14 @@ const formatCurrency = value => {
 
                     <div class="d-flex flex-column align-end mt-3 mt-md-0">
 
-                        <v-chip :color="statusColor(asset.status)" variant="tonal" class="mb-2">
+                        <v-chip :color="statusColor(formData.status)" variant="tonal" class="mb-2">
                             <v-icon icon="mdi-circle" size="8" start />
 
-                            {{ asset.status }}
+                            {{ formData.status }}
                         </v-chip>
 
-                        <v-chip :color="conditionColor(asset.condition)" variant="outlined" size="small">
-                            {{ asset.condition }}
+                        <v-chip :color="conditionColor(formData.condition)" variant="outlined" size="small">
+                            {{ formData.condition }}
                         </v-chip>
 
                     </div>
@@ -264,7 +358,7 @@ const formatCurrency = value => {
                                 </div>
 
                                 <div class="info-value">
-                                    {{ asset.assetTag }}
+                                    {{ formData.asset_tag }}
                                 </div>
                             </v-col>
 
@@ -274,7 +368,7 @@ const formatCurrency = value => {
                                 </div>
 
                                 <div class="info-value">
-                                    {{ asset.propertyNumber }}
+                                    {{ formData.property_number }}
                                 </div>
                             </v-col>
 
@@ -284,7 +378,7 @@ const formatCurrency = value => {
                                 </div>
 
                                 <div class="info-value">
-                                    {{ asset.category }}
+                                    {{ formData.category_id }}
                                 </div>
                             </v-col>
 
@@ -294,7 +388,7 @@ const formatCurrency = value => {
                                 </div>
 
                                 <div class="info-value">
-                                    {{ asset.serialNumber }}
+                                    {{ formData.serial_number }}
                                 </div>
                             </v-col>
 
@@ -304,7 +398,7 @@ const formatCurrency = value => {
                                 </div>
 
                                 <div class="info-value">
-                                    {{ asset.brand }}
+                                    {{ formData.brand }}
                                 </div>
                             </v-col>
 
@@ -314,7 +408,7 @@ const formatCurrency = value => {
                                 </div>
 
                                 <div class="info-value">
-                                    {{ asset.model }}
+                                    {{ formData.model }}
                                 </div>
                             </v-col>
 
@@ -324,7 +418,7 @@ const formatCurrency = value => {
                                 </div>
 
                                 <div class="info-value">
-                                    {{ asset.quantity }}
+                                    {{ formData.quantity }}
                                 </div>
                             </v-col>
 
@@ -334,7 +428,7 @@ const formatCurrency = value => {
                                 </div>
 
                                 <div class="info-value">
-                                    {{ asset.supplier }}
+                                    {{ formData.supplier_id }}
                                 </div>
                             </v-col>
 
@@ -359,7 +453,7 @@ const formatCurrency = value => {
                     <v-card-text class="pa-5">
 
                         <div class="text-body-1">
-                            {{ asset.specifications }}
+                            {{ formData.specifications }}
                         </div>
 
                     </v-card-text>
@@ -414,8 +508,8 @@ const formatCurrency = value => {
                                     </strong>
 
                                     <v-chip size="x-small" class="ml-2" :color="item.status === 'Completed'
-                                            ? 'success'
-                                            : 'warning'
+                                        ? 'success'
+                                        : 'warning'
                                         " variant="tonal">
                                         {{ item.status }}
                                     </v-chip>
@@ -467,7 +561,7 @@ const formatCurrency = value => {
                                 </div>
 
                                 <div class="info-value">
-                                    {{ asset.department }}
+                                    {{ formData.department_id }}
                                 </div>
                             </div>
                         </div>
@@ -481,7 +575,7 @@ const formatCurrency = value => {
                                 </div>
 
                                 <div class="info-value">
-                                    {{ asset.location }}
+                                    {{ formData.location_id }}
                                 </div>
                             </div>
                         </div>
@@ -491,11 +585,11 @@ const formatCurrency = value => {
 
                             <div>
                                 <div class="info-label">
-                                    Room
+                                    End-User
                                 </div>
 
                                 <div class="info-value">
-                                    {{ asset.room }}
+                                    {{ formData.room }}
                                 </div>
                             </div>
                         </div>
@@ -505,11 +599,11 @@ const formatCurrency = value => {
 
                             <div>
                                 <div class="info-label">
-                                    Custodian
+                                    Current End-User
                                 </div>
 
                                 <div class="info-value">
-                                    {{ asset.custodian }}
+                                    {{ formData.custodian }}
                                 </div>
                             </div>
                         </div>
@@ -539,7 +633,7 @@ const formatCurrency = value => {
                                 </div>
 
                                 <div class="info-value text-success">
-                                    {{ formatCurrency(asset.acquisitionCost) }}
+                                    {{ formatCurrency(formData.unit_cost) }}
                                 </div>
                             </div>
                         </div>
@@ -553,7 +647,7 @@ const formatCurrency = value => {
                                 </div>
 
                                 <div class="info-value">
-                                    {{ asset.purchaseDate }}
+                                    {{ formData.purchase_date }}
                                 </div>
                             </div>
                         </div>
@@ -567,7 +661,7 @@ const formatCurrency = value => {
                                 </div>
 
                                 <div class="info-value">
-                                    {{ asset.warrantyExpiry }}
+                                    {{ formData.warranty_expiry }}
                                 </div>
                             </div>
                         </div>
@@ -589,7 +683,7 @@ const formatCurrency = value => {
                     <v-card-text class="pa-5">
 
                         <div class="text-body-2 text-medium-emphasis">
-                            {{ asset.remarks }}
+                            {{ formData.remarks }}
                         </div>
 
                     </v-card-text>
@@ -621,11 +715,11 @@ const formatCurrency = value => {
                     </div>
 
                     <div class="text-h6">
-                        {{ asset.assetTag }}
+                        {{ formData.asset_tag }}
                     </div>
 
                     <div class="text-caption text-medium-emphasis">
-                        {{ asset.itemName }}
+                        {{ formData.item_name }}
                     </div>
 
                 </v-card-text>

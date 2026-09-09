@@ -9,12 +9,19 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Index from '@/pages/index.vue'
 import Homepage from '@/pages/homepage.vue'
 import Dashboard from '@/pages/dashboard.vue'
+import Login from '@/pages/login.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
+      name: 'login',
+      component: Login
+    },
+    {
+      path: '/dashboard',
       component: Homepage,
       children: [
         {
@@ -34,9 +41,14 @@ const router = createRouter({
           component: () => import('@/pages/assetcreate.vue'),
         },
         {
-          path: ':id',
+          path: 'assets/:id', 
           name: 'assets-view',
           component: () => import('@/pages/assetview.vue'),
+        },
+        {
+          path: 'assets/:id/edit',
+          name: 'assets-edit',
+          component: () => import('@/pages/assetedit.vue'),
         },
 
         {
@@ -85,6 +97,9 @@ const router = createRouter({
           path: 'users',
           name: 'users',
           component: () => import('@/pages/users.vue'),
+          meta: {
+            permission: 'users.view',
+          },
         },
 
         {
@@ -103,4 +118,35 @@ const router = createRouter({
   ],
 })
 
+router.beforeEach((to) => {
+  const token = localStorage.getItem('authToken')
+  const auth = useAuthStore()
+
+  if (to.name !== 'login' && !token) {
+    return { name: 'login' }
+  }
+
+  if (to.name === 'login' && token) {
+    if (to.meta.permission) {
+      if (!auth.hasPermission(to.meta.permission as string)) {
+        return { name: 'dashboard' }
+      }
+    }
+    /* return { name: 'dashboard' } */
+  }
+
+  return true
+})
+/* router.beforeEach((to) => {
+const token = localStorage.getItem('authToken')
+  const auth = useAuthStore()
+
+  if (to.meta.permission) {
+    if (!auth.hasPermission(to.meta.permission as string)) {
+      return { name: 'dashboard' }
+    }
+  }
+
+  return true
+}) */
 export default router

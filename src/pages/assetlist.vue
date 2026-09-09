@@ -1,6 +1,30 @@
 ```vue
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import api from '@/api/axios'
+
+const assets = ref([])
+const loading = ref(false)
+const route = useRoute()
+
+const fetchAssets = async () => {
+    loading.value = true
+
+    try {
+        const response = await api.get('/assets')
+ 
+        assets.value = response.data.data
+    } catch (error) {
+        console.error('Failed to load assets:', error)
+    } finally {
+        loading.value = false
+    }
+}
+
+onMounted(() => {
+    fetchAssets()
+})
 
 /*
 |--------------------------------------------------------------------------
@@ -21,7 +45,7 @@ const selectedAssets = ref([])
 const showDeleteDialog = ref(false)
 const assetToDelete = ref(null)
 
-const assets = ref([
+/* const assets = ref([
     {
         id: 1,
         assetTag: 'ICT-2026-0001',
@@ -182,7 +206,7 @@ const assets = ref([
         status: 'Serviceable',
         condition: 'Excellent',
     },
-])
+]) */
 
 const categories = [
     'All',
@@ -196,20 +220,16 @@ const categories = [
 
 const departments = [
     'All',
-    'ICT Office',
-    'Registrar',
-    'Accounting',
-    'College of Education',
-    'Library',
-    'Human Resource',
-    'Admission',
+    'CISA',
+    'ADMIN',
 ]
 
 const statuses = [
     'All',
-    'Serviceable',
-    'Under Repair',
-    'Unserviceable',
+    'available',
+    'assigned',
+    'under_maintenance',
+    'unserviceable',
 ]
 
 /*
@@ -224,12 +244,12 @@ const filteredAssets = computed(() => {
     return assets.value.filter(asset => {
         const matchesSearch =
             !query ||
-            asset.assetTag.toLowerCase().includes(query) ||
-            asset.propertyNumber.toLowerCase().includes(query) ||
-            asset.itemName.toLowerCase().includes(query) ||
+            asset.asset_tag.toLowerCase().includes(query) ||
+            asset.property_number.toLowerCase().includes(query) ||
+            asset.item_name.toLowerCase().includes(query) ||
             asset.brand.toLowerCase().includes(query) ||
             asset.model.toLowerCase().includes(query) ||
-            asset.serialNumber.toLowerCase().includes(query)
+            asset.serial_number.toLowerCase().includes(query)
 
         const matchesStatus =
             statusFilter.value === 'All' ||
@@ -237,11 +257,11 @@ const filteredAssets = computed(() => {
 
         const matchesCategory =
             categoryFilter.value === 'All' ||
-            asset.category === categoryFilter.value
+            asset.category.name === categoryFilter.value
 
         const matchesDepartment =
             departmentFilter.value === 'All' ||
-            asset.department === departmentFilter.value
+            asset.department.code === departmentFilter.value
 
         return (
             matchesSearch &&
@@ -262,19 +282,19 @@ const totalAssets = computed(() => assets.value.length)
 
 const serviceableAssets = computed(() =>
     assets.value.filter(
-        asset => asset.status === 'Serviceable',
+        asset => asset.status === 'available' ,
     ).length,
 )
 
 const repairAssets = computed(() =>
     assets.value.filter(
-        asset => asset.status === 'Under Repair',
+        asset => asset.status === 'under_maintenance',
     ).length,
 )
 
 const unserviceableAssets = computed(() =>
     assets.value.filter(
-        asset => asset.status === 'Unserviceable',
+        asset => asset.status === 'unserviceable',
     ).length,
 )
 
@@ -338,7 +358,7 @@ const confirmDelete = asset => {
     showDeleteDialog.value = true
 }
 
-const deleteAsset = () => {
+/* const deleteAsset = () => {
     if (!assetToDelete.value) return
 
     assets.value = assets.value.filter(
@@ -352,7 +372,28 @@ const deleteAsset = () => {
     assetToDelete.value = null
     showDeleteDialog.value = false
 }
+ */
+const assetId = route.params.id
+const deleteAsset = async (asset) => {
+    try {
+        await api.delete(`/assets/${asset.id}`)
 
+        // Remove from current table
+        assets.value = assets.value.filter(
+            item => item.id !== asset.id
+        )
+
+        alert('Asset deleted successfully.')
+        showDeleteDialog.value = false
+    } catch (error) {
+        console.error('Failed to delete asset:', error)
+
+        alert(
+            error.response?.data?.message ||
+            'Failed to delete asset.'
+        )
+    }
+}
 /*
 |--------------------------------------------------------------------------
 | CLEAR FILTERS
@@ -588,12 +629,17 @@ const clearFilters = () => {
             <v-data-table v-model="selectedAssets" :headers="[
                 {
                     title: 'Asset Tag',
-                    key: 'assetTag',
+                    key: 'asset_tag',
+                    sortable: true,
+                },
+                {
+                    title: 'Property No.',
+                    key: 'property_number',
                     sortable: true,
                 },
                 {
                     title: 'Item',
-                    key: 'itemName',
+                    key: 'item_name',
                     sortable: true,
                 },
                 {
@@ -603,16 +649,12 @@ const clearFilters = () => {
                 },
                 {
                     title: 'Department',
-                    key: 'department',
+                    key: 'department.code',
                     sortable: true,
                 },
                 {
-                    title: 'Location',
-                    key: 'location',
-                },
-                {
                     title: 'Cost',
-                    key: 'acquisitionCost',
+                    key: 'unit_cost',
                     align: 'end',
                 },
                 {
@@ -629,10 +671,10 @@ const clearFilters = () => {
 
                 <!-- Asset Tag -->
 
-                <template #item.assetTag="{ item }">
+                <template #item.asset_tag="{ item }">
                     <div>
                         <div class="font-weight-bold text-primary">
-                            {{ item.assetTag }}
+                            {{ item.asset_tag }}
                         </div>
 
                         <div class="text-caption text-medium-emphasis">
@@ -701,7 +743,7 @@ const clearFilters = () => {
                             </v-tooltip>
                         </v-btn>
 
-                        <v-btn variant="text" size="small" :to="`/assets/${item.id}/edit`">
+                        <v-btn variant="text" size="small" :to="{ name: 'assets-edit', params: { id: item.id } }">
                             <v-icon>mdi-pencil-outline</v-icon>
                             <v-tooltip activator="parent">
                                 Edit Asset
@@ -770,7 +812,7 @@ const clearFilters = () => {
                     Are you sure you want to delete
 
                     <strong>
-                        {{ assetToDelete?.assetTag }}
+                        {{ assetToDelete?.asset_tag }}
                     </strong>
 
                     ?
@@ -790,11 +832,12 @@ const clearFilters = () => {
                         Cancel
                     </v-btn>
 
-                    <v-btn color="error" variant="flat" @click="deleteAsset">
+                    <v-btn color="error" variant="flat" @click="deleteAsset(assetToDelete)">
                         Delete
                     </v-btn>
 
                 </v-card-actions>
+
 
             </v-card>
 

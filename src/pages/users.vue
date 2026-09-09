@@ -11,7 +11,8 @@
                 </div>
             </div>
 
-            <v-btn color="primary" prepend-icon="mdi-account-plus-outline" class="mt-3 mt-sm-0" @click="openAddDialog">
+            <v-btn v-if="auth.hasPermission('users.create')" color="primary" prepend-icon="mdi-account-plus-outline"
+                class="mt-3 mt-sm-0" @click="openAddDialog">
                 Add User
             </v-btn>
         </div>
@@ -234,7 +235,7 @@
                                     {{ roleIcon(item.role) }}
                                 </v-icon>
 
-                                {{ item.role }}
+                                {{ item.roles[0].name }}
                             </v-chip>
                         </template>
 
@@ -254,9 +255,9 @@
                         </template>
 
                         <!-- Last Login -->
-                        <template #item.last_login="{ item }">
+                        <template #item.last_login_at="{ item }">
                             <div class="text-body-2">
-                                {{ item.last_login }}
+                                {{ formatDate(item.last_login_at) }}
                             </div>
                         </template>
 
@@ -353,8 +354,8 @@
                         </v-col>
 
                         <v-col cols="12" md="6">
-                            <v-select v-model="formData.role" label="Role" :items="roleNames"
-                                prepend-inner-icon="mdi-shield-account-outline" variant="outlined"
+                            <v-select v-model="formData.role_id" label="Role" :items="roles" item-title="name"
+                                item-value="id" prepend-inner-icon="mdi-shield-account-outline" variant="outlined"
                                 density="comfortable" />
                         </v-col>
 
@@ -386,7 +387,7 @@
                         Cancel
                     </v-btn>
 
-                    <v-btn color="primary" prepend-icon="mdi-content-save-outline" @click="saveUser">
+                    <v-btn color="primary" prepend-icon="mdi-content-save-outline" @click="createUser">
                         Save User
                     </v-btn>
                 </v-card-actions>
@@ -460,7 +461,7 @@
                             </v-list-item-title>
 
                             <v-list-item-subtitle>
-                                {{ selectedUser.last_login }}
+                                {{ formatDate(selectedUser.last_login_at) }}
                             </v-list-item-subtitle>
                         </v-list-item>
 
@@ -505,17 +506,17 @@
                     </div>
 
                     <div class="text-caption text-medium-emphasis mt-1">
-                        {{ selectedUser.name }} · {{ selectedUser.role }}
+                        {{ selectedUser.name }} · {{ selectedUser.roles[0].name }}
                     </div>
                 </v-card-title>
 
                 <v-divider />
 
                 <v-card-text class="pa-5">
-                    <v-alert type="info" variant="tonal" class="mb-5">
+                    <!--  <v-alert type="info" variant="tonal" class="mb-5">
                         Permissions are currently displayed as a frontend
                         preview. They can be connected to Laravel RBAC later.
-                    </v-alert>
+                    </v-alert> -->
 
                     <v-row>
                         <v-col v-for="module in permissionModules" :key="module.name" cols="12" sm="6">
@@ -598,8 +599,64 @@
 </template>
 
 <script setup>
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, onMounted } from 'vue'
+import api from '@/api/axios'
+import { useAuthStore } from '@/stores/auth'
 
+const auth = useAuthStore()
+const users = ref([])
+
+async function fetchUsers() {
+    try {
+        const response = await api.get('/users')
+
+        users.value = response.data.data
+    } catch (error) {
+        console.error('Failed to load users:', error)
+    }
+}
+const formData = ref({
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+    role_id: null,
+})
+const formatDate = (date) => {
+    if (!date) {
+        return 'Never'
+    }
+
+    const parsedDate = new Date(date)
+
+    if (isNaN(parsedDate.getTime())) {
+        return 'Invalid date'
+    }
+
+    return parsedDate.toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+    })
+}
+async function createUser() {
+    try {
+        await api.post('/users', formData.value)
+
+        await fetchUsers()
+
+        // close dialog
+        // reset form
+
+    } catch (error) {
+        console.error('Failed to create user:', error)
+    }
+}
+onMounted(() => {
+    fetchUsers()
+})
 const search = ref('')
 const selectedRole = ref(null)
 const statusFilter = ref('All')
@@ -633,26 +690,26 @@ const roles = [
         icon: 'mdi-shield-crown-outline',
     },
     {
-        name: 'ICT Technician',
-        user_count: 3,
+        name: 'ICT Staff',
+        id: 3,
         color: 'primary',
         icon: 'mdi-tools',
     },
     {
-        name: 'Custodian',
-        user_count: 2,
+        name: 'Inventory Custodian',
+        id: 4,
         color: 'warning',
         icon: 'mdi-clipboard-account-outline',
     },
     {
-        name: 'Department User',
-        user_count: 4,
+        name: 'Technician',
+        id: 5,
         color: 'info',
         icon: 'mdi-account-outline',
     },
     {
         name: 'Viewer',
-        user_count: 1,
+        id: 6,
         color: 'grey',
         icon: 'mdi-eye-outline',
     },
@@ -660,7 +717,7 @@ const roles = [
 
 const roleNames = roles.map(role => role.name)
 
-const users = ref([
+/* const users = ref([
     {
         id: 1,
         name: 'ICT Administrator',
@@ -769,7 +826,7 @@ const users = ref([
         last_login: 'June 20, 2026',
         created_at: 'January 20, 2026',
     },
-])
+]) */
 
 const headers = [
     {
@@ -789,7 +846,7 @@ const headers = [
     },
     {
         title: 'Last Login',
-        key: 'last_login',
+        key: 'last_login_at',
         sortable: true,
     },
     {
@@ -800,14 +857,14 @@ const headers = [
     },
 ]
 
-const formData = reactive({
+/* const formData = reactive({
     name: '',
     email: '',
     role: 'Department User',
     status: 'Active',
     password: '',
     password_confirmation: '',
-})
+}) */
 
 const permissionModules = [
     {
@@ -1010,12 +1067,7 @@ function viewUser(user) {
 function managePermissions(user) {
     selectedUser.value = user
 
-    selectedPermissions.value = [
-        'assets.view',
-        'maintenance.view',
-        'reports.view',
-    ]
-
+    selectedPermissions.value = selectedUser.value.permissions
     permissionsDialog.value = true
 }
 

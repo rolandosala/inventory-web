@@ -54,55 +54,55 @@
                         <v-card-text class="pa-5">
                             <v-row>
                                 <v-col cols="12" md="6">
-                                    <v-text-field v-model="asset.asset_tag" label="Asset Tag"
+                                    <v-text-field v-model="formData.asset_tag" label="Asset Tag"
                                         placeholder="e.g. ICT-2026-001" prepend-inner-icon="mdi-tag-outline"
                                         variant="outlined" density="comfortable" :rules="[required]" />
                                 </v-col>
 
                                 <v-col cols="12" md="6">
-                                    <v-text-field v-model="asset.property_number" label="Property Number"
+                                    <v-text-field v-model="formData.property_number" label="Property Number"
                                         placeholder="e.g. PAR-2026-001" prepend-inner-icon="mdi-file-document-outline"
                                         variant="outlined" density="comfortable" />
                                 </v-col>
 
                                 <v-col cols="12" md="6">
-                                    <v-text-field v-model="asset.item_name" label="Item Name"
+                                    <v-text-field v-model="formData.item_name" label="Item Name"
                                         placeholder="e.g. Desktop Computer" prepend-inner-icon="mdi-monitor"
                                         variant="outlined" density="comfortable" :rules="[required]" />
                                 </v-col>
 
                                 <v-col cols="12" md="6">
-                                    <v-select v-model="asset.category" label="Category" :items="categories"
-                                        prepend-inner-icon="mdi-shape-outline" variant="outlined" density="comfortable"
-                                        :rules="[required]" />
+                                    <v-select v-model="formData.category_id" label="Category" :items="categories"
+                                        item-title="name" item-value="id" prepend-inner-icon="mdi-shape-outline"
+                                        variant="outlined" density="comfortable" :rules="[required]" />
                                 </v-col>
 
                                 <v-col cols="12" md="4">
-                                    <v-text-field v-model="asset.brand" label="Brand" placeholder="e.g. Dell"
+                                    <v-text-field v-model="formData.brand" label="Brand" placeholder="e.g. Dell"
                                         prepend-inner-icon="mdi-alpha-b-circle-outline" variant="outlined"
                                         density="comfortable" />
                                 </v-col>
 
                                 <v-col cols="12" md="4">
-                                    <v-text-field v-model="asset.model" label="Model" placeholder="e.g. OptiPlex 7010"
-                                        prepend-inner-icon="mdi-barcode-scan" variant="outlined"
-                                        density="comfortable" />
+                                    <v-text-field v-model="formData.model" label="Model"
+                                        placeholder="e.g. OptiPlex 7010" prepend-inner-icon="mdi-barcode-scan"
+                                        variant="outlined" density="comfortable" />
                                 </v-col>
 
                                 <v-col cols="12" md="4">
-                                    <v-text-field v-model="asset.serial_number" label="Serial Number"
+                                    <v-text-field v-model="formData.serial_number" label="Serial Number"
                                         placeholder="Enter serial number" prepend-inner-icon="mdi-identifier"
                                         variant="outlined" density="comfortable" />
                                 </v-col>
 
                                 <v-col cols="12" md="4">
-                                    <v-text-field v-model.number="asset.quantity" label="Quantity" type="number" min="1"
-                                        prepend-inner-icon="mdi-counter" variant="outlined" density="comfortable"
-                                        :rules="[required]" />
+                                    <v-text-field v-model.number="formData.quantity" label="Quantity" type="number"
+                                        min="1" prepend-inner-icon="mdi-counter" variant="outlined"
+                                        density="comfortable" :rules="[required]" />
                                 </v-col>
 
                                 <v-col cols="12" md="8">
-                                    <v-textarea v-model="asset.specifications" label="Specifications"
+                                    <v-textarea v-model="formData.specifications" label="Specifications"
                                         placeholder="Processor, RAM, storage, display, ports, etc."
                                         prepend-inner-icon="mdi-cog-outline" variant="outlined" density="comfortable"
                                         rows="3" />
@@ -134,17 +134,16 @@
                         <v-divider />
 
                         <v-card-text class="pa-5">
-                            <v-select v-model="asset.department" label="Department / Office" :items="departments"
-                                prepend-inner-icon="mdi-domain" variant="outlined" density="comfortable"
-                                :rules="[required]" class="mb-3" />
+                            <v-select v-model="formData.department_id" label="Department / Office" :items="departments"
+                                item-title="name" item-value="id" prepend-inner-icon="mdi-domain" variant="outlined"
+                                density="comfortable" :rules="[required]" class="mb-3" />
 
-                            <v-select v-model="asset.location" label="Location / Room" :items="locations"
-                                prepend-inner-icon="mdi-map-marker-outline" variant="outlined" density="comfortable"
-                                :rules="[required]" class="mb-3" />
+                            <v-select v-model="formData.location_id" label="Location / Room" :items="locations"
+                                item-title="name" item-value="id" prepend-inner-icon="mdi-map-marker-outline"
+                                variant="outlined" density="comfortable" :rules="[required]" class="mb-3" />
 
-                            <v-text-field v-model="asset.assigned_to" label="Assigned To"
-                                placeholder="Name of personnel" prepend-inner-icon="mdi-account-outline"
-                                variant="outlined" density="comfortable" />
+                            <v-text-field label="End-User" placeholder="Name of personnel"
+                                prepend-inner-icon="mdi-account-outline" variant="outlined" density="comfortable" />
                         </v-card-text>
                     </v-card>
                 </v-col>
@@ -171,19 +170,19 @@
                         <v-divider />
 
                         <v-card-text class="pa-5">
-                            <v-text-field v-model="asset.supplier" label="Supplier" placeholder="Supplier / Vendor"
-                                prepend-inner-icon="mdi-store-outline" variant="outlined" density="comfortable"
-                                class="mb-3" />
+                            <v-text-field v-model="formData.supplier_id" label="Supplier"
+                                placeholder="Supplier / Vendor" prepend-inner-icon="mdi-store-outline"
+                                variant="outlined" density="comfortable" class="mb-3" />
 
-                            <v-text-field v-model.number="asset.unit_cost" label="Unit Cost" type="number" min="0"
+                            <v-text-field v-model.number="formData.unit_cost" label="Unit Cost" type="number" min="0"
                                 prefix="₱" prepend-inner-icon="mdi-cash" variant="outlined" density="comfortable"
                                 class="mb-3" />
 
-                            <v-text-field v-model="asset.purchase_date" label="Purchase Date" type="date"
+                            <v-text-field v-model="formData.purchase_date" label="Purchase Date" type="date"
                                 prepend-inner-icon="mdi-calendar-outline" variant="outlined" density="comfortable"
                                 class="mb-3" />
 
-                            <v-text-field v-model="asset.warranty_expiry" label="Warranty Expiry" type="date"
+                            <v-text-field v-model="formData.warranty_expiry" label="Warranty Expiry" type="date"
                                 prepend-inner-icon="mdi-calendar-clock-outline" variant="outlined"
                                 density="comfortable" />
                         </v-card-text>
@@ -214,19 +213,19 @@
                         <v-card-text class="pa-5">
                             <v-row>
                                 <v-col cols="12" md="4">
-                                    <v-select v-model="asset.status" label="Status" :items="statuses"
+                                    <v-select v-model="formData.status" label="Status" :items="statuses"
                                         prepend-inner-icon="mdi-list-status" variant="outlined" density="comfortable"
                                         :rules="[required]" />
                                 </v-col>
 
                                 <v-col cols="12" md="4">
-                                    <v-select v-model="asset.condition" label="Condition" :items="conditions"
+                                    <v-select v-model="formData.condition" label="Condition" :items="conditions"
                                         prepend-inner-icon="mdi-check-circle-outline" variant="outlined"
                                         density="comfortable" :rules="[required]" />
                                 </v-col>
 
                                 <v-col cols="12" md="4">
-                                    <v-text-field v-model="asset.remarks" label="Remarks"
+                                    <v-text-field v-model="formData.remarks" label="Remarks"
                                         placeholder="Additional remarks" prepend-inner-icon="mdi-note-text-outline"
                                         variant="outlined" density="comfortable" />
                                 </v-col>
@@ -242,7 +241,7 @@
                             Cancel
                         </v-btn>
 
-                        <v-btn color="primary" prepend-icon="mdi-content-save" :loading="saving" @click="saveAsset">
+                        <v-btn color="primary" prepend-icon="mdi-content-save" :loading="saving" @click="createAsset">
                             Save Asset
                         </v-btn>
                     </div>
@@ -270,6 +269,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import api from '@/api/axios'
 
 const router = useRouter()
 
@@ -277,6 +277,90 @@ const form = ref(null)
 const valid = ref(false)
 const saving = ref(false)
 const snackbar = ref(false)
+const formData = ref({
+    asset_tag: '',
+    category_id: null,
+    supplier_id: null,
+    department_id: null,
+    location_id: null,
+    property_number: '',
+    item_name: '',
+    brand: '',
+    model: '',
+    serial_number: '',
+    specifications: '',
+    quantity: 1,
+    unit_cost: 0,
+    purchase_date: null,
+    warranty_expiry: null,
+    status: '',
+    condition: '',
+    remarks: '',
+})
+const loading = ref(false)
+const errorMessage = ref('')
+const successMessage = ref('')
+const createAsset = async () => {
+    loading.value = true
+    errorMessage.value = ''
+    successMessage.value = ''
+
+    try {
+        const response = await api.post('/assets', formData.value)
+
+
+        saving.value = true
+        successMessage.value = 'Asset created successfully.'
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        saving.value = false
+        snackbar.value = true
+
+        // Demo only:
+        // return to asset list after saving
+        setTimeout(() => {
+            router.push('/dashboard/assets')
+        }, 1000)
+
+        // Reset form
+        formData.value = {
+            asset_tag: '',
+            category_id: null,
+            supplier_id: null,
+            department_id: null,
+            location_id: null,
+            property_number: '',
+            item_name: '',
+            brand: '',
+            model: '',
+            serial_number: '',
+            specifications: '',
+            quantity: 1,
+            unit_cost: 0,
+            purchase_date: null,
+            warranty_expiry: null,
+            status: 'active',
+            condition: 'good',
+            remarks: '',
+        }
+
+    } catch (error) {
+        console.error('Failed to create asset:', error)
+
+        if (error.response?.data?.errors) {
+            errorMessage.value = Object.values(
+                error.response.data.errors
+            ).flat().join(' ')
+        } else {
+            errorMessage.value =
+                error.response?.data?.message ||
+                'Failed to create formData.'
+        }
+
+    } finally {
+        loading.value = false
+    }
+}
 
 const asset = ref({
     asset_tag: '',
@@ -304,58 +388,145 @@ const asset = ref({
 })
 
 const categories = [
-    'Desktop Computer',
-    'Laptop',
-    'Printer',
-    'Network Equipment',
-    'Projector',
-    'UPS',
-    'Server',
-    'Monitor',
-    'Scanner',
-    'Other',
+    {
+        id: 1,
+        name: 'Desktop Computer',
+    },
+    {
+        id: 2,
+        name: 'Laptop',
+    },
+    {
+        id: 3,
+        name: 'Printer',
+    },
+    {
+        id: 4,
+        name: 'Network Equipment',
+    },
+    {
+        id: 5,
+        name: 'Projector',
+    },
+    {
+        id: 6,
+        name: 'UPS',
+    },
+    {
+        id: 7,
+        name: 'Server',
+    },
+    {
+        id: 8,
+        name: 'Monitor',
+    },
+    {
+        id: 9,
+        name: 'Scanner',
+    },
+    {
+        id: 10,
+        name: 'Other',
+    },
 ]
 
 const departments = [
-    'ICT Office',
-    'Registrar',
-    'Accounting',
-    'Budget Office',
-    'Human Resource Office',
-    'Library',
-    'College of Education',
-    'College of Engineering',
-    'College of Arts and Sciences',
-    'Student Affairs',
+    {
+        id: 1,
+        name: 'ICT Office',
+    },
+    {
+        id: 2,
+        name: 'Registrar',
+    },
+    {
+        id: 3,
+        name: 'Accounting',
+    },
+    {
+        id: 4,
+        name: 'Budget Office',
+    },
+    {
+        id: 5,
+        name: 'Human Resource Office',
+    },
+    {
+        id: 6,
+        name: 'Library',
+    },
+    {
+        id: 7,
+        name: 'College of Education',
+    },
+    {
+        id: 8,
+        name: 'College of Engineering',
+    },
+    {
+        id: 9,
+        name: 'College of Arts and Sciences',
+    },
+    {
+        id: 10,
+        name: 'Student Affairs',
+    },
 ]
 
 const locations = [
-    'ICT Office',
-    'Administration Building',
-    'Registrar Office',
-    'Accounting Office',
-    'Library',
-    'Computer Laboratory 1',
-    'Computer Laboratory 2',
-    'Science Laboratory',
-    'Engineering Laboratory',
-    'Faculty Room',
+    {
+        id: 1,
+        name: 'ICT Office',
+    },
+    {
+        id: 2,
+        name: 'Administration Building',
+    },
+    {
+        id: 3,
+        name: 'Registrar Office',
+    },
+    {
+        id: 4,
+        name: 'Accounting Office',
+    },
+    {
+        id: 5,
+        name: 'Library',
+    },
+    {
+        id: 6,
+        name: 'Computer Laboratory 1',
+    },
+    {
+        id: 7,
+        name: 'Computer Laboratory 2',
+    },
+    {
+        id: 8,
+        name: 'Science Laboratory',
+    },
+    {
+        id: 9,
+        name: 'Engineering Laboratory',
+    },
+    {
+        id: 10,
+        name: 'Faculty Room',
+    },
 ]
 
 const statuses = [
-    'Serviceable',
-    'Under Repair',
-    'Unserviceable',
-    'For Disposal',
-    'Lost',
+    'available', 'assigned', 'in_storage', 'under_maintenance', 'lost', 'damaged', 'for disposal', 'disposed', 'retired'
 ]
 
 const conditions = [
-    'Excellent',
-    'Good',
-    'Fair',
-    'Poor',
-    'Damaged',
+    'new',
+    'good',
+    'fair',
+    'poor',
+    'damaged',
+    'unserviceable',
 ]
 
 const required = value => {
@@ -363,7 +534,7 @@ const required = value => {
 }
 
 const goBack = () => {
-    router.push('/assets')
+    router.push('/dashboard/assets')
 }
 
 const saveAsset = async () => {
@@ -379,7 +550,7 @@ const saveAsset = async () => {
     // No API / Laravel connection yet
     await new Promise(resolve => setTimeout(resolve, 800))
 
-    console.log('New Asset:', asset.value)
+    console.log('New Asset:', formData.value)
 
     saving.value = false
     snackbar.value = true
@@ -387,7 +558,7 @@ const saveAsset = async () => {
     // Demo only:
     // return to asset list after saving
     setTimeout(() => {
-        router.push('/assets')
+        router.push('/dashboard/assets')
     }, 1000)
 }
 </script>
