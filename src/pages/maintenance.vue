@@ -59,7 +59,7 @@
           </v-col>
 
           <v-col cols="12" sm="6" md="3">
-            <v-select v-model="statusFilter" label="Status" :items="['All', 'Completed', 'In Progress', 'Pending']"
+            <v-select v-model="statusFilter" label="Status" :items="['All', 'completed', 'in_progress', 'pending']"
               variant="outlined" density="comfortable" hide-details />
           </v-col>
 
@@ -106,6 +106,7 @@
             <div class="text-caption text-medium-emphasis">
               {{ item.item_name }}
             </div>
+            
           </div>
         </template>
 
@@ -195,12 +196,17 @@
 
               <v-col cols="12" md="6">
                 <v-autocomplete v-model="formData.asset.asset_tag" label="Asset" :items="assetOptions"
-                  variant="outlined" density="comfortable" prepend-inner-icon="mdi-monitor" clearable />
+                  item-title="title" item-value="value" variant="outlined" density="comfortable"
+                  prepend-inner-icon="mdi-monitor" clearable v-if="editing" />
+                <v-autocomplete v-model="formData.asset_id" label="Asset" :items="assetOptions" item-title="title"
+                  item-value="value" variant="outlined" density="comfortable" prepend-inner-icon="mdi-monitor" clearable
+                  v-else />
+
               </v-col>
 
               <v-col cols="12" md="6">
                 <v-select v-model="formData.maintenance_type" label="Maintenance Type"
-                  :items="['Preventive', 'Corrective', 'Inspection']" variant="outlined" density="comfortable"
+                  :items="['preventive', 'corrective', 'inspection']" variant="outlined" density="comfortable"
                   prepend-inner-icon="mdi-wrench-outline" />
               </v-col>
 
@@ -210,7 +216,7 @@
               </v-col>
 
               <v-col cols="12" md="6">
-                <v-select v-model="formData.status" label="Status" :items="['Completed', 'In Progress', 'Pending']"
+                <v-select v-model="formData.status" label="Status" :items="['completed', 'in_progress', 'cancelled']"
                   variant="outlined" density="comfortable" prepend-inner-icon="mdi-list-status" />
               </v-col>
 
@@ -434,6 +440,7 @@
 import { computed, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/api/axios'
+const router = useRouter()
 
 const search = ref('')
 const typeFilter = ref('All')
@@ -451,6 +458,7 @@ const snackbarMessage = ref('')
 const snackbarColor = ref('success')
 
 const records = ref([])
+const assetTags = ref([])
 const loading = ref(false)
 const route = useRoute()
 
@@ -467,9 +475,23 @@ const fetchRecords = async () => {
     loading.value = false
   }
 }
+const fetchAssetTags = async () => {
+  loading.value = true
+
+  try {
+    const response = await api.get('/assets')
+
+    assetTags.value = response.data.data
+  } catch (error) {
+    console.error('Failed to load assets:', error)
+  } finally {
+    loading.value = false
+  }
+}
 
 onMounted(() => {
   fetchRecords()
+  fetchAssetTags()
 })
 /* const records = ref([
   {
@@ -559,6 +581,7 @@ onMounted(() => {
 ]) */
 
 const formData = ref({
+  asset_id: '',
   asset_tag: '',
   type: 'Preventive',
   date: '',
@@ -582,7 +605,7 @@ const headers = [
   },
   {
     title: 'Date',
-    key: 'date_reported',
+    key: 'date_started',
     sortable: true,
   },
   {
@@ -613,7 +636,7 @@ const summaryCards = computed(() => [
   {
     title: 'Completed',
     value: records.value.filter(
-      item => item.status === 'Completed'
+      item => item.status === 'completed'
     ).length,
     icon: 'mdi-check-circle-outline',
     color: 'success',
@@ -621,7 +644,7 @@ const summaryCards = computed(() => [
   {
     title: 'In Progress',
     value: records.value.filter(
-      item => item.status === 'In Progress'
+      item => item.status === 'in_progress'
     ).length,
     icon: 'mdi-progress-wrench',
     color: 'warning',
@@ -629,7 +652,7 @@ const summaryCards = computed(() => [
   {
     title: 'Unserviceable',
     value: records.value.filter(
-      item => item.status === 'In Progress'
+      item => item.status === 'cancelled'
     ).length,
     icon: 'mdi-cash-multiple',
     color: 'secondary',
@@ -637,26 +660,28 @@ const summaryCards = computed(() => [
 ])
 
 const assetOptions = computed(() =>
-  [...new Set(records.value.map(item => item.asset.asset_tag))]
+  assetTags.value.map(item => ({
+    title: item.asset_tag,
+    value: item.id
+  }))
 )
 
 const filteredRecords = computed(() => {
   const query = search.value.toLowerCase().trim()
-
   return records.value.filter(item => {
     const matchesSearch =
       !query ||
-      item.asset_tag.toLowerCase().includes(query) ||
-      item.item_name.toLowerCase().includes(query) ||
-      item.technician.toLowerCase().includes(query)
+      item.asset.asset_tag.toLocaleLowerCase().includes(query)
+    /*   item.item_name.toLocaleLowerCase().includes(query) ||
+      item.technician.toLocaleLowerCase().includes(query) */
 
     const matchesType =
       typeFilter.value === 'All' ||
-      item.maintenance_type === typeFilter.value
+      item.maintenance_type === typeFilter.value.toLocaleLowerCase()
 
     const matchesStatus =
       statusFilter.value === 'All' ||
-      item.status === statusFilter.value
+      item.status === statusFilter.value.toLocaleLowerCase()
 
     return matchesSearch && matchesType && matchesStatus
   })
@@ -672,11 +697,11 @@ const formatCurrency = value => {
 
 const typeColor = type => {
   switch (type) {
-    case 'Preventive':
+    case 'preventive':
       return 'primary'
-    case 'Corrective':
+    case 'corrective':
       return 'warning'
-    case 'Inspection':
+    case 'inspection':
       return 'secondary'
     default:
       return 'default'
@@ -685,11 +710,11 @@ const typeColor = type => {
 
 const statusColor = status => {
   switch (status) {
-    case 'Completed':
+    case 'completed':
       return 'success'
-    case 'In Progress':
+    case 'in_progress':
       return 'warning'
-    case 'Pending':
+    case 'cancelled':
       return 'error'
     default:
       return 'default'
@@ -719,15 +744,17 @@ const openCreateDialog = () => {
   editing.value = false
 
   formData.value = {
+    id: '',
     asset_tag: '',
-    type: 'Preventive',
-    date: new Date().toISOString().substring(0, 10),
-    technician: 'ICT Technician',
+    maintenance_type: '',
+    date_started: new Date().toISOString().substring(0, 10),
+    technician_id: 1,
     cost: 0,
-    status: 'Completed',
-    description: '',
+    status: 'Pending',
+    problem_description: '',
     remarks: '',
   }
+  console.log(formData.value)
 
   dialog.value = true
 }
@@ -771,11 +798,7 @@ const confirmDelete = () => {
 const deleteAsset = async (asset) => {
   try {
     await api.delete(`/maintenance/${asset.id}`)
-
-    // Remove from current table
-    assets.value = assets.value.filter(
-      item => item.id !== asset.id
-    )
+    router.push('/dashboard/maintenance')
   } catch (error) {
     console.error('Failed to delete asset:', error)
 
@@ -785,8 +808,8 @@ const deleteAsset = async (asset) => {
     )
   }
 }
-const saveRecord = () => {
-  if (!formData.value.asset_tag) {
+const saveRecord = async () => {
+  if (!formData.value.asset_id) {
     showSnackbar(
       'Please select an asset.',
       'error'
@@ -795,7 +818,7 @@ const saveRecord = () => {
     return
   }
 
-  if (!formData.value.description) {
+  if (!formData.value.problem_description) {
     showSnackbar(
       'Please enter a maintenance description.',
       'error'
@@ -819,19 +842,22 @@ const saveRecord = () => {
       'Maintenance record updated successfully.',
       'success'
     )
+
   } else {
-    const newRecord = {
+    /* const newRecord = {
       ...formData.value,
       id: Date.now(),
       item_name: formData.value.asset_tag,
     }
-
-    records.value.unshift(newRecord)
-
+    records.value.unshift(newRecord) */
+    const response = await api.post('/maintenance', formData.value)
     showSnackbar(
       'Maintenance record added successfully.',
       'success'
     )
+    setTimeout(() => {
+      fetchRecords()
+    }, 1000)
   }
 
   dialog.value = false

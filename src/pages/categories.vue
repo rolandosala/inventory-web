@@ -476,7 +476,9 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import api from '@/api/axios'
 
 const search = ref('')
 const statusFilter = ref('All')
@@ -491,6 +493,8 @@ const selectedCategory = ref(null)
 const snackbar = ref(false)
 const snackbarMessage = ref('')
 const snackbarColor = ref('success')
+const categories = ref([])
+
 
 /*
 |--------------------------------------------------------------------------
@@ -498,7 +502,7 @@ const snackbarColor = ref('success')
 |--------------------------------------------------------------------------
 */
 
-const categories = ref([
+/* const categories = ref([
     {
         id: 1,
         name: 'Desktop Computer',
@@ -598,8 +602,27 @@ const categories = ref([
         status: 'Inactive',
         created_at: '2026-02-10',
     },
-])
+]) */
 
+const fetchCategories = async () => {
+
+    try {
+        const response = await api.get('/categories')
+        categories.value = response.data.data
+        console.log(categories.value)
+        const cat = categories.value.map(item => ({
+            code: item.code
+        }))
+        console.log(cat)
+
+    } catch (error) {
+        console.error('Failed to load categories:', error)
+    }
+}
+
+onMounted(() => {
+    fetchCategories()
+})
 /*
 |--------------------------------------------------------------------------
 | Form
