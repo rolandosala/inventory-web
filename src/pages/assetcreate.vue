@@ -54,9 +54,9 @@
                         <v-card-text class="pa-5">
                             <v-row>
                                 <v-col cols="12" md="6">
-                                    <v-text-field v-model="formData.asset_tag" label="Asset Tag"
+                                    <v-text-field v-model="generatedAssetTag" label="Asset Tag"
                                         placeholder="e.g. ICT-2026-001" prepend-inner-icon="mdi-tag-outline"
-                                        variant="outlined" density="comfortable" :rules="[required]" />
+                                        variant="outlined" density="comfortable" readonly />
                                 </v-col>
 
                                 <v-col cols="12" md="6">
@@ -267,7 +267,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '@/api/axios'
 
@@ -277,6 +277,10 @@ const form = ref(null)
 const valid = ref(false)
 const saving = ref(false)
 const snackbar = ref(false)
+const generatedAssetTag = ref('')
+
+
+
 const formData = ref({
     asset_tag: '',
     category_id: null,
@@ -297,6 +301,18 @@ const formData = ref({
     condition: '',
     remarks: '',
 })
+const getNextAssetTag = async () => {
+    const response = await api.get('/assets/next-number')
+
+    generatedAssetTag.value = response.data.asset_tag
+   //formData.asset_tag.value = response.data.asset_tag
+    console.log(formData.asset_tag)
+    console.log(generatedAssetTag.value)
+}
+onMounted(() => {
+    getNextAssetTag()
+})
+console.log(generatedAssetTag.value)
 const loading = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
@@ -559,7 +575,10 @@ const saveAsset = async () => {
     // return to asset list after saving
     setTimeout(() => {
         router.push('/dashboard/assets')
+        nextNumber.value += 1
     }, 1000)
 }
+
+
 </script>
 ```

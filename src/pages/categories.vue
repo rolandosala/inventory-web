@@ -144,7 +144,7 @@
                             mdi-package-variant
                         </v-icon>
 
-                        {{ item.asset_count }}
+                        {{ item.asset_records }}
                     </v-chip>
 
                 </template>
@@ -605,9 +605,8 @@ const categories = ref([])
 ]) */
 
 const fetchCategories = async () => {
-
     try {
-        const response = await api.get('/categories')
+        const response = await api.get('/category-counts')
         categories.value = response.data.data
         console.log(categories.value)
         const cat = categories.value.map(item => ({

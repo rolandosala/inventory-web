@@ -1,7 +1,8 @@
 ```vue
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import QRCode from 'qrcode'
 import api from '@/api/axios'
 
 
@@ -11,7 +12,8 @@ const router = useRouter()
 const loading = ref(false)
 const errorMessage = ref('')
 const loadingAsset = ref(false)
-
+const qrCodeData = ref('')
+const maintenanceRecords = ref([])
 const assetId = route.params.id
 console.log(assetId)
 const formData = ref({
@@ -42,8 +44,10 @@ const fetchAsset = async () => {
         const response = await api.get(`/assets/${assetId}`)
         const assets = response.data.data
         console.log(assets)
-
+        maintenanceRecords.value = assets.maintenance_records
+        console.log(maintenanceRecords.value)
         formData.value = {
+            id: assets.id,
             asset_tag: assets.asset_tag ?? '',
             category_id: assets.category.name ?? '',
             supplier_id: assets.supplier_id ?? '',
@@ -80,6 +84,28 @@ const fetchAsset = async () => {
         loadingAsset.value = false
     }
 }
+const generateQRCode = async () => {
+    if (!formData.value.asset_tag) {
+        qrCodeData.value = ''
+        return
+    }
+
+    qrCodeData.value = await QRCode.toDataURL(
+        formData.value.asset_tag,
+        {
+            width: 300,
+            margin: 2,
+            errorCorrectionLevel: 'H'
+        }
+    )
+}
+watch(
+    () => formData.value.asset_tag,
+    () => {
+        generateQRCode()
+    },
+    { immediate: true }
+)
 
 onMounted(() => {
     fetchAsset()
@@ -99,86 +125,6 @@ const editAsset = () => {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| DUMMY ASSET DATA
-|--------------------------------------------------------------------------
-*/
-
-/* const assets = [
-    {
-        id: 1,
-        assetTag: 'ICT-2026-0001',
-        propertyNumber: 'SLSU-ICT-2026-001',
-        itemName: 'Desktop Computer',
-        category: 'Desktop Computer',
-        brand: 'Dell',
-        model: 'OptiPlex 7010',
-        serialNumber: 'DL7010-001245',
-        department: 'ICT Office',
-        location: 'ICT Laboratory',
-        room: 'Room 101',
-        custodian: 'ICT Technician',
-        acquisitionCost: 45000,
-        purchaseDate: 'January 15, 2026',
-        warrantyExpiry: 'January 15, 2029',
-        status: 'Serviceable',
-        condition: 'Good',
-        quantity: 1,
-        supplier: 'Dell Technologies',
-        specifications:
-            'Intel Core i5, 8GB DDR5 RAM, 256GB SSD, 1TB HDD, Intel UHD Graphics',
-        remarks: 'Assigned for ICT laboratory use.',
-    },
-    {
-        id: 2,
-        assetTag: 'ICT-2026-0002',
-        propertyNumber: 'SLSU-ICT-2026-002',
-        itemName: 'Laptop',
-        category: 'Laptop',
-        brand: 'Lenovo',
-        model: 'ThinkPad E14',
-        serialNumber: 'LNV-E14-98231',
-        department: 'Registrar',
-        location: 'Registrar Office',
-        room: 'Room 203',
-        custodian: 'Registrar Staff',
-        acquisitionCost: 52000,
-        purchaseDate: 'January 20, 2026',
-        warrantyExpiry: 'January 20, 2029',
-        status: 'Serviceable',
-        condition: 'Good',
-        quantity: 1,
-        supplier: 'Lenovo Philippines',
-        specifications:
-            'Intel Core i5, 16GB RAM, 512GB NVMe SSD, 14-inch FHD Display',
-        remarks: 'For official office use.',
-    },
-    {
-        id: 3,
-        assetTag: 'ICT-2026-0003',
-        propertyNumber: 'SLSU-ICT-2026-003',
-        itemName: 'Printer',
-        category: 'Printer',
-        brand: 'Epson',
-        model: 'L5290',
-        serialNumber: 'EP5290-002341',
-        department: 'Accounting',
-        location: 'Accounting Office',
-        room: 'Room 105',
-        custodian: 'Accounting Staff',
-        acquisitionCost: 18000,
-        purchaseDate: 'February 5, 2026',
-        warrantyExpiry: 'February 5, 2028',
-        status: 'Under Repair',
-        condition: 'Needs Repair',
-        quantity: 1,
-        supplier: 'Epson Philippines',
-        specifications:
-            'EcoTank All-in-One Printer, Wi-Fi, Print/Scan/Copy/Fax',
-        remarks: 'Paper feed problem reported.',
-    },
-] */
 
 const maintenanceHistory = [
     {
@@ -243,6 +189,39 @@ const formatCurrency = value => {
         maximumFractionDigits: 0,
     }).format(value)
 }
+const printPropertyLabel = async () => {
+
+    try {
+
+        const response = await api.get(
+            `/assets/${formData.value.id}/property-label`,
+            {
+                responseType: 'blob'
+            }
+        )
+
+        const blob = new Blob(
+            [response.data],
+            {
+                type: 'application/pdf'
+            }
+        )
+
+        const url = window.URL.createObjectURL(blob)
+
+        window.open(url, '_blank')
+
+    } catch (error) {
+
+        console.error(
+            'Failed to generate property label:',
+            error
+        )
+
+    }
+
+}
+
 </script>
 
 <template>
@@ -490,12 +469,12 @@ const formatCurrency = value => {
 
                     <v-timeline side="end" density="compact" class="pa-5">
 
-                        <v-timeline-item v-for="item in maintenanceHistory" :key="item.id" dot-color="primary"
+                        <v-timeline-item v-for="item in maintenanceRecords" :key="item.id" dot-color="primary"
                             size="small">
 
                             <template #opposite>
                                 <span class="text-caption">
-                                    {{ item.date }}
+                                    {{ item.date_started }}
                                 </span>
                             </template>
 
@@ -504,10 +483,10 @@ const formatCurrency = value => {
                                 <div class="d-flex align-center">
 
                                     <strong>
-                                        {{ item.type }}
+                                        {{ item.maintenance_type }}
                                     </strong>
 
-                                    <v-chip size="x-small" class="ml-2" :color="item.status === 'Completed'
+                                    <v-chip size="x-small" class="ml-2" :color="item.status === 'completed'
                                         ? 'success'
                                         : 'warning'
                                         " variant="tonal">
@@ -517,11 +496,11 @@ const formatCurrency = value => {
                                 </div>
 
                                 <div class="text-body-2 mt-1">
-                                    {{ item.description }}
+                                    {{ item.problem_description }}
                                 </div>
 
                                 <div class="text-caption text-medium-emphasis mt-1">
-                                    Technician: {{ item.technician }}
+                                    Technician: {{ item.technician_id }}
                                 </div>
 
                             </div>
@@ -698,9 +677,9 @@ const formatCurrency = value => {
         <!-- QR CODE DIALOG -->
         <!-- ========================================================= -->
 
-        <v-dialog v-model="showQrDialog" max-width="400">
+        <v-dialog v-model="showQrDialog" max-width="500">
 
-            <v-card rounded="lg">
+            <!--  <v-card rounded="lg">
 
                 <v-card-title class="text-center pt-6">
                     Asset QR Code
@@ -732,10 +711,70 @@ const formatCurrency = value => {
 
                 </v-card-actions>
 
-            </v-card>
+            </v-card> -->
+            <v-card rounded="lg" class="qr-card"> <!-- Header --> <v-card-text class="pb-2">
+                    <div class="school-header">
+                        <div class="row d-flex justify-content-center align-items-center">
+                            <!-- School Logo -->
+                            <div class="col-md-2">
+                                <v-img
+                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMj92tMTV36BAjxnF8BnCg-9sL1uUPe-BNDx0hxhc0cg&s=10"
+                                    width="65" height="65" contain class="school-logo" />
+                            </div>
+                            <div class="col-md-8 mx-2">
+                                <div class="school-name">
+                                    <div class="text-h6 font-weight-bold"> Southern Leyte State University </div>
+                                    <div class="text-subtitle-1 "> Tomas Oppus Campus </div>
+                                    <div class="text-subtitle-1 "> San Isidro, Tomas Oppus, Southern Leyte </div>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                </v-card-text> <v-divider /> <!-- QR + Information --> <v-card-text class="pa-6">
+                    <div class="property-label"> <!-- QR CODE -->
+                        <div class="row d-flex">
+                            <div class="col-md-4">
+                                <div class="qr-section">
+                                    <div class="qr-code">
+                                        <img v-if="qrCodeData" :src="qrCodeData" alt="Asset QR Code"
+                                            class="qr-image d-block" width="200" height="200" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="property-info">
+                                    <div class="text-subtitle-2 text-medium-emphasis"> PROPERTY INFORMATION </div>
+                                    <div class="info-row">
+                                        <div class="info-label"> Asset Tag: </div>
+                                        <div class="info-value"> {{ formData.asset_tag || 'N/A' }} </div>
+                                    </div>
+                                    <div class="info-row">
+                                        <div class="info-label"> Property No: </div>
+                                        <div class="info-value"> {{ formData.property_number || 'N/A' }} </div>
+                                    </div>
+                                    <div class="info-row">
+                                        <div class="info-label"> Cost: </div>
+                                        <div class="info-value"> {{ formData.unit_cost || 'N/A' }} </div>
+                                    </div>
+                                    <div class="info-row">
+                                        <div class="info-label"> End-USer: </div>
+                                        <div class="info-value"> {{ formData.department_id || 'N/A' }} </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- PROPERTY DETAILS -->
+
+                    </div>
+                </v-card-text> <!-- Print --> <v-card-actions class="pa-5 pt-0"> <v-btn block variant="tonal"
+                        color="primary" prepend-icon="mdi-printer" @click="printPropertyLabel"> Print QR Code </v-btn>
+                </v-card-actions> </v-card>
 
         </v-dialog>
-
     </v-container>
 </template>
 

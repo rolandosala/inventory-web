@@ -43,7 +43,7 @@ const menuItems = [
         title: 'Departments',
         icon: 'mdi-office-building-outline',
         to: 'departments',
-    },
+    }/*,
     {
         title: 'Locations',
         icon: 'mdi-map-marker-outline',
@@ -53,7 +53,7 @@ const menuItems = [
         title: 'Suppliers',
         icon: 'mdi-truck-outline',
         to: 'suppliers',
-    },
+    },*/
 ]
 
 const systemItems = [

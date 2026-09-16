@@ -165,7 +165,7 @@ const statusColor = status => {
         </p>
       </div>
 
-      <div class="d-flex ga-2 mt-3 mt-md-0">
+      <!-- <div class="d-flex ga-2 mt-3 mt-md-0">
         <v-btn
           variant="outlined"
           prepend-icon="mdi-qrcode-scan"
@@ -181,7 +181,7 @@ const statusColor = status => {
         >
           Add Asset
         </v-btn>
-      </div>
+      </div> -->
     </div>
 
     <!-- ========================================================= -->
@@ -363,7 +363,7 @@ const statusColor = status => {
     <!-- INVENTORY VALUE + WARRANTY -->
     <!-- ========================================================= -->
 
-    <v-row class="mt-1">
+    <v-row class="mt-5">
 
       <v-col
         cols="12"
