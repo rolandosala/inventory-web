@@ -320,8 +320,8 @@ const statusColor = status => {
         case 'under_maintenance':
             return 'warning'
 
-        case 'Unserviceable':
-            return 'error'
+        case 'assigned':
+            return 'primary'
 
         default:
             return 'grey'

@@ -413,7 +413,7 @@ const createAsset = async () => {
         // Demo only:
         // return to asset list after saving
         setTimeout(() => {
-            router.push('/dashboard/assets')
+            router.push('/assets')
         }, 1000)
 
         // Reset form
@@ -628,7 +628,7 @@ const required = value => {
 }
 
 const goBack = () => {
-    router.push('/dashboard/assets')
+    router.push('/assets')
 }
 
 const saveAsset = async () => {
@@ -652,7 +652,7 @@ const saveAsset = async () => {
     // Demo only:
     // return to asset list after saving
     setTimeout(() => {
-        router.push('/dashboard/assets')
+        router.push('/assets')
         nextNumber.value += 1
     }, 1000)
 }

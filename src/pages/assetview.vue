@@ -112,7 +112,7 @@ onMounted(() => {
 })
 
 const goBack = () => {
-    router.push('/dashboard/assets')
+    router.push('/assets')
 }
 
 const editAsset = () => {
@@ -156,12 +156,12 @@ const showQrDialog = ref(false)
 
 const statusColor = status => {
     switch (status) {
-        case 'Serviceable':
+        case 'available':
             return 'success'
-        case 'Under Repair':
+        case 'under_maintenance':
             return 'warning'
-        case 'Unserviceable':
-            return 'error'
+        case 'assigned':
+            return 'primary'
         default:
             return 'grey'
     }
@@ -239,7 +239,7 @@ const printPropertyLabel = async () => {
 
             <div class="d-flex align-center">
 
-                <v-btn icon="mdi-arrow-left" variant="text" class="mr-2" to="/dashboard/assets" />
+                <v-btn icon="mdi-arrow-left" variant="text" class="mr-2" to="/assets" />
 
                 <div>
                     <div class="text-caption text-medium-emphasis">
@@ -303,9 +303,9 @@ const printPropertyLabel = async () => {
                             {{ formData.status }}
                         </v-chip>
 
-                        <v-chip :color="conditionColor(formData.condition)" variant="outlined" size="small">
+                        <!-- <v-chip :color="conditionColor(formData.condition)" variant="outlined" size="small">
                             {{ formData.condition }}
-                        </v-chip>
+                        </v-chip> -->
 
                     </div>
 

@@ -386,7 +386,7 @@ const updateAsset = async () => {
 
         snackbar.value = true
         setTimeout(() => {
-            router.push('/dashboard/assets')
+            router.push('/assets')
         }, 1000)
 
     } catch (error) {
@@ -406,7 +406,7 @@ const updateAsset = async () => {
     }
 }
 const goBack = () => {
-    router.push('/dashboard/assets')
+    router.push('/assets')
 }
 
 onMounted(() => {

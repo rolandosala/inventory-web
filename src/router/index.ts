@@ -16,16 +16,16 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path: '/login',
       name: 'login',
       component: Login
     },
     {
-      path: '/dashboard',
+      path: '/',
       component: Homepage,
       children: [
         {
-          path: '',
+          path: 'dashboard',
           name: 'dashboard',
           component: Dashboard,
         },
