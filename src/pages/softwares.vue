@@ -258,8 +258,8 @@
                         <v-spacer />
 
                         <v-chip :color="software.status === 'Active'
-                                ? 'success'
-                                : 'error'
+                            ? 'success'
+                            : 'error'
                             " size="x-small" variant="tonal">
                             {{ software.status }}
                         </v-chip>
@@ -310,7 +310,7 @@
 
                 <v-divider />
 
-                <v-card-text class="pa-5">
+                <v-card-text class="">
                     <v-row>
                         <v-col cols="12" md="8">
                             <v-text-field v-model="formData.name" label="Software Name"
@@ -322,9 +322,35 @@
                                 variant="outlined" density="comfortable" />
                         </v-col>
                     </v-row>
+                    <v-row>
+                        <v-col cols="12" md="6">
+                            <v-text-field v-model="formData.publisher" label="Publisher" placeholder="e.g. Microsoft"
+                                prepend-inner-icon="mdi-domain" variant="outlined" density="comfortable" class="" />
+                        </v-col>
+                        <v-col cols="12" md="6">
+                            <v-select v-model="formData.icon" label="Icons" :items="softwareIcons" item-title="name"
+                                item-value="value" variant="outlined" density="comfortable">
+                                <template #item="{ props, item }">
+                                    <v-list-item v-bind="props">
+                                        <template #prepend>
+                                            <v-icon size="28">
+                                                {{ item.value }}
+                                            </v-icon>
+                                        </template>
+                                    </v-list-item>
+                                </template>
 
-                    <v-text-field v-model="formData.publisher" label="Publisher" placeholder="e.g. Microsoft"
-                        prepend-inner-icon="mdi-domain" variant="outlined" density="comfortable" class="mb-4" />
+                                <template #selection="{ item }">
+                                    <v-icon class="mr-2">
+                                        {{ item.value }}
+                                    </v-icon>
+
+                                    {{ item.name }}
+                                </template>
+                            </v-select>
+                        </v-col>
+                    </v-row>
+
 
                     <v-row>
                         <v-col cols="12" md="6">
@@ -534,7 +560,9 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import api from '@/api/axios'
 
 const search = ref('')
 const categoryFilter = ref('All')
@@ -551,8 +579,26 @@ const selectedSoftware = ref(null)
 const snackbar = ref(false)
 const snackbarMessage = ref('')
 const snackbarColor = ref('success')
+const softwares = ref([])
 
-const softwares = ref([
+const fetchSoftwares = async () => {
+    try {
+        const response = await api.get('/software')
+
+        softwares.value = response.data.data.data
+        console.log(softwares.value)
+    } catch (error) {
+        console.error('Failed to load sofwares:', error)
+    } /* finally {
+        loading.value = false
+    } */
+}
+
+onMounted(() => {
+    fetchSoftwares()
+})
+
+/* const softwares = ref([
     {
         id: 1,
         name: 'Microsoft Windows 11 Pro',
@@ -703,9 +749,10 @@ const softwares = ref([
         color: 'error',
         description: 'Legacy antivirus software no longer in use.',
     },
-])
+]) */
 
 const formData = ref({
+    id: 0,
     name: '',
     publisher: '',
     version: '',
@@ -716,6 +763,7 @@ const formData = ref({
     expiry: '',
     description: '',
     status: 'Active',
+    icon: ''
 })
 
 const categoryOptions = computed(() => [
@@ -854,6 +902,7 @@ function resetForm() {
         expiry: '',
         description: '',
         status: 'Active',
+        icon: ''
     }
 }
 
@@ -869,6 +918,7 @@ function editSoftware(software) {
     selectedSoftware.value = software
 
     formData.value = {
+        id: software.id,
         name: software.name,
         publisher: software.publisher,
         version: software.version,
@@ -882,6 +932,7 @@ function editSoftware(software) {
                 : software.expiry,
         description: software.description,
         status: software.status,
+        icon: software.icon
     }
 
     formDialog.value = true
@@ -892,11 +943,8 @@ function viewSoftware(software) {
     viewDialog.value = true
 }
 
-function saveSoftware() {
-    if (
-        !formData.value.name ||
-        !formData.value.publisher
-    ) {
+const saveSoftware = async () => {
+    if (!formData.value.name || !formData.value.publisher) {
         showSnackbar(
             'Software name and publisher are required.',
             'error',
@@ -920,10 +968,12 @@ function saveSoftware() {
                     'Perpetual',
             }
         }
+        const response = await api.put(`/software/${formData.value.id}`, formData.value)
 
         showSnackbar('Software updated successfully.')
+        await new Promise(resolve => setTimeout(resolve, 800));
     } else {
-        softwares.value.push({
+        /* softwares.value.push({
             id: Date.now(),
             ...formData.value,
             expiry:
@@ -931,9 +981,11 @@ function saveSoftware() {
                 'Perpetual',
             icon: 'mdi-application-outline',
             color: 'primary',
-        })
+        }) */
+        const response = await api.post('/software', formData.value)
 
         showSnackbar('Software added successfully.')
+        await new Promise(resolve => setTimeout(resolve, 800));
     }
 
     formDialog.value = false
@@ -944,15 +996,16 @@ function confirmDelete(software) {
     deleteDialog.value = true
 }
 
-function deleteSoftware() {
+const deleteSoftware = async () => {
     if (!selectedSoftware.value) return
-
+    const response = await api.delete(`/software/${selectedSoftware.value.id}`, formData.value)
     softwares.value = softwares.value.filter(
         (software) =>
             software.id !== selectedSoftware.value.id,
     )
 
     deleteDialog.value = false
+
     showSnackbar('Software deleted successfully.')
     selectedSoftware.value = null
 }
@@ -962,6 +1015,60 @@ function showSnackbar(message, color = 'success') {
     snackbarColor.value = color
     snackbar.value = true
 }
+const softwareIcons = [
+    {
+        name: 'Windows',
+        value: 'mdi-microsoft-windows'
+    },
+    {
+        name: 'Linux',
+        value: 'mdi-linux'
+    },
+    {
+        name: 'Apple',
+        value: 'mdi-apple'
+    },
+    {
+        name: 'Android',
+        value: 'mdi-android'
+    },
+    {
+        name: 'Microsoft Office',
+        value: 'mdi-microsoft-office'
+    },
+    {
+        name: 'Database',
+        value: 'mdi-database'
+    },
+    {
+        name: 'Server',
+        value: 'mdi-server'
+    },
+    {
+        name: 'Cloud',
+        value: 'mdi-cloud'
+    },
+    {
+        name: 'Application',
+        value: 'mdi-application'
+    },
+    {
+        name: 'Web',
+        value: 'mdi-web'
+    },
+    {
+        name: 'Security',
+        value: 'mdi-shield-lock'
+    },
+    {
+        name: 'Programming',
+        value: 'mdi-code-tags'
+    },
+    {
+        name: 'ChatGPT',
+        value: 'mdi-chatgpt'
+    }
+]
 </script>
 
 <style scoped>

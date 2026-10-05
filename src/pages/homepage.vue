@@ -25,7 +25,7 @@ const menuItems = [
     {
         title: 'Assets',
         icon: 'mdi-laptop',
-        to: 'assets',
+        to: 'assets', 
         permission: 'assets.view',
     },
     {

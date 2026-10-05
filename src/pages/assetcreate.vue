@@ -17,7 +17,7 @@
                 </p>
             </div>
 
-            <div class="d-flex ga-2">
+            <!-- <div class="d-flex ga-2">
                 <v-btn variant="outlined" prepend-icon="mdi-close" @click="goBack">
                     Cancel
                 </v-btn>
@@ -25,13 +25,13 @@
                 <v-btn color="primary" prepend-icon="mdi-content-save" :loading="saving" @click="saveAsset">
                     Save Asset
                 </v-btn>
-            </div>
+            </div> -->
         </div>
 
         <v-form ref="form" v-model="valid">
             <v-row>
                 <!-- Asset Information -->
-                <v-col cols="12">
+                <v-col cols="7">
                     <v-card elevation="1" rounded="lg">
                         <v-card-title class="d-flex align-center pa-5">
                             <v-avatar color="primary" variant="tonal" size="42" class="mr-3">
@@ -65,6 +65,13 @@
                                         variant="outlined" density="comfortable" />
                                 </v-col>
 
+
+
+                                <v-col cols="12" md="6">
+                                    <v-select v-model="formData.category_id" label="Category" :items="categories"
+                                        item-title="name" item-value="id" prepend-inner-icon="mdi-shape-outline"
+                                        variant="outlined" density="comfortable" :rules="[required]" />
+                                </v-col>
                                 <v-col cols="12" md="6">
                                     <v-text-field v-model="formData.item_name" label="Item Name"
                                         placeholder="e.g. Desktop Computer" prepend-inner-icon="mdi-monitor"
@@ -72,36 +79,30 @@
                                 </v-col>
 
                                 <v-col cols="12" md="6">
-                                    <v-select v-model="formData.category_id" label="Category" :items="categories"
-                                        item-title="name" item-value="id" prepend-inner-icon="mdi-shape-outline"
-                                        variant="outlined" density="comfortable" :rules="[required]" />
-                                </v-col>
-
-                                <v-col cols="12" md="4">
                                     <v-text-field v-model="formData.brand" label="Brand" placeholder="e.g. Dell"
                                         prepend-inner-icon="mdi-alpha-b-circle-outline" variant="outlined"
                                         density="comfortable" />
                                 </v-col>
 
-                                <v-col cols="12" md="4">
+                                <v-col cols="12" md="6">
                                     <v-text-field v-model="formData.model" label="Model"
                                         placeholder="e.g. OptiPlex 7010" prepend-inner-icon="mdi-barcode-scan"
                                         variant="outlined" density="comfortable" />
                                 </v-col>
 
-                                <v-col cols="12" md="4">
+                                <v-col cols="12" md="6">
                                     <v-text-field v-model="formData.serial_number" label="Serial Number"
                                         placeholder="Enter serial number" prepend-inner-icon="mdi-identifier"
                                         variant="outlined" density="comfortable" />
                                 </v-col>
 
-                                <v-col cols="12" md="4">
+                                <v-col cols="12" md="6">
                                     <v-text-field v-model.number="formData.quantity" label="Quantity" type="number"
                                         min="1" prepend-inner-icon="mdi-counter" variant="outlined"
                                         density="comfortable" :rules="[required]" />
                                 </v-col>
 
-                                <v-col cols="12" md="8">
+                                <v-col cols="12" md="12">
                                     <v-textarea v-model="formData.specifications" label="Specifications"
                                         placeholder="Processor, RAM, storage, display, ports, etc."
                                         prepend-inner-icon="mdi-cog-outline" variant="outlined" density="comfortable"
@@ -111,9 +112,7 @@
                         </v-card-text>
                     </v-card>
                 </v-col>
-
-                <!-- Assignment -->
-                <v-col cols="12" md="6">
+                <v-col cols="6" md="5" v-if="formData.category_id == 1 || formData.category_id == 2">
                     <v-card elevation="1" rounded="lg" height="100%">
                         <v-card-title class="d-flex align-center pa-5">
                             <v-avatar color="secondary" variant="tonal" size="42" class="mr-3">
@@ -122,47 +121,11 @@
 
                             <div>
                                 <div class="text-subtitle-1 font-weight-bold">
-                                    Assignment
+                                    Software
                                 </div>
 
-                                <div class="text-caption text-medium-emphasis">
-                                    Where the asset is assigned
-                                </div>
-                            </div>
-                        </v-card-title>
+                                <div class="text-body-2 text-medium-emphasis">
 
-                        <v-divider />
-
-                        <v-card-text class="pa-5">
-                            <v-select v-model="formData.department_id" label="Department / Office" :items="departments"
-                                item-title="name" item-value="id" prepend-inner-icon="mdi-domain" variant="outlined"
-                                density="comfortable" :rules="[required]" class="mb-3" />
-
-                            <v-select v-model="formData.location_id" label="Location / Room" :items="locations"
-                                item-title="name" item-value="id" prepend-inner-icon="mdi-map-marker-outline"
-                                variant="outlined" density="comfortable" :rules="[required]" class="mb-3" />
-
-                            <v-text-field label="End-User" placeholder="Name of personnel"
-                                prepend-inner-icon="mdi-account-outline" variant="outlined" density="comfortable" />
-                        </v-card-text>
-                    </v-card>
-                </v-col>
-
-                <!-- Acquisition -->
-                <v-col cols="12" md="6">
-                    <v-card elevation="1" rounded="lg" height="100%">
-                        <v-card-title class="d-flex align-center pa-5">
-                            <v-avatar color="success" variant="tonal" size="42" class="mr-3">
-                                <v-icon>mdi-cart-outline</v-icon>
-                            </v-avatar>
-
-                            <div>
-                                <div class="text-subtitle-1 font-weight-bold">
-                                    Acquisition
-                                </div>
-
-                                <div class="text-caption text-medium-emphasis">
-                                    Purchase and warranty information
                                 </div>
                             </div>
                         </v-card-title>
@@ -170,82 +133,192 @@
                         <v-divider />
 
                         <v-card-text class="pa-5">
-                            <v-text-field v-model="formData.supplier_id" label="Supplier"
-                                placeholder="Supplier / Vendor" prepend-inner-icon="mdi-store-outline"
-                                variant="outlined" density="comfortable" class="mb-3" />
+                            <v-select label="Operating System" :items="['Windows', 'MacOS', 'Linux', 'Google Flex']"
+                                prepend-inner-icon="mdi-domain" variant="outlined" density="comfortable"
+                                :rules="[required]" />
 
-                            <v-text-field v-model.number="formData.unit_cost" label="Unit Cost" type="number" min="0"
-                                prefix="₱" prepend-inner-icon="mdi-cash" variant="outlined" density="comfortable"
-                                class="mb-3" />
+                            <v-select label="Version" :items="['10 Home', '10 Pro', '11 Home', '11 Pro']"
+                                prepend-inner-icon="mdi-map-marker-outline" variant="outlined" density="comfortable"
+                                :rules="[required]" />
 
-                            <v-text-field v-model="formData.purchase_date" label="Purchase Date" type="date"
-                                prepend-inner-icon="mdi-calendar-outline" variant="outlined" density="comfortable"
-                                class="mb-3" />
+                            <v-select label="License" :items="['Perpetual', 'Volume MAK', 'Volume KMS', 'Unlicense']"
+                                prepend-inner-icon="mdi-map-marker-outline" variant="outlined" density="comfortable"
+                                :rules="[required]" />
+                            <div class="d-flex ga-2 mb-2">
+                                <v-btn color="primary" prepend-icon="mdi-content-save" :loading="saving" @click="">
+                                    Add Software
+                                </v-btn>
 
-                            <v-text-field v-model="formData.warranty_expiry" label="Warranty Expiry" type="date"
-                                prepend-inner-icon="mdi-calendar-clock-outline" variant="outlined"
-                                density="comfortable" />
-                        </v-card-text>
-                    </v-card>
-                </v-col>
-
-                <!-- Status and Condition -->
-                <v-col cols="12">
-                    <v-card elevation="1" rounded="lg">
-                        <v-card-title class="d-flex align-center pa-5">
-                            <v-avatar color="warning" variant="tonal" size="42" class="mr-3">
-                                <v-icon>mdi-clipboard-check-outline</v-icon>
-                            </v-avatar>
-
-                            <div>
-                                <div class="text-subtitle-1 font-weight-bold">
-                                    Status & Condition
-                                </div>
-
-                                <div class="text-caption text-medium-emphasis">
-                                    Current operational status of the asset
-                                </div>
                             </div>
-                        </v-card-title>
-
-                        <v-divider />
-
-                        <v-card-text class="pa-5">
                             <v-row>
-                                <v-col cols="12" md="4">
-                                    <v-select v-model="formData.status" label="Status" :items="statuses"
-                                        prepend-inner-icon="mdi-list-status" variant="outlined" density="comfortable"
-                                        :rules="[required]" />
-                                </v-col>
-
-                                <v-col cols="12" md="4">
-                                    <v-select v-model="formData.condition" label="Condition" :items="conditions"
-                                        prepend-inner-icon="mdi-check-circle-outline" variant="outlined"
+                                <v-col cols="6" md="6">
+                                    <v-select label="Software Installed"
+                                        :items="['MS Office 365', 'ChatGPT', 'Gemini', 'Grammarly']"
+                                        prepend-inner-icon="mdi-map-marker-outline" variant="outlined"
                                         density="comfortable" :rules="[required]" />
                                 </v-col>
-
-                                <v-col cols="12" md="4">
-                                    <v-text-field v-model="formData.remarks" label="Remarks"
-                                        placeholder="Additional remarks" prepend-inner-icon="mdi-note-text-outline"
-                                        variant="outlined" density="comfortable" />
-                                </v-col>
-                            </v-row>
-                        </v-card-text>
-                    </v-card>
+                                <v-col cols="6" md="6"">
+                                    <v-select label=" Type" :items="['Subscribed', 'Perpetual', 'Free/Open Source']"
+                                    prepend-inner-icon="mdi-map-marker-outline" variant="outlined" density="comfortable"
+                                    :rules="[required]" />
                 </v-col>
+            </v-row>
+            <div class="d-flex ga-2 mb-2">
+                <v-btn color="primary" prepend-icon="mdi-content-save" :loading="saving" @click="">
+                    Add Security
+                </v-btn>
 
-                <!-- Bottom Actions -->
-                <v-col cols="12">
-                    <div class="d-flex justify-end ga-2">
-                        <v-btn variant="outlined" @click="goBack">
-                            Cancel
-                        </v-btn>
-
-                        <v-btn color="primary" prepend-icon="mdi-content-save" :loading="saving" @click="createAsset">
-                            Save Asset
-                        </v-btn>
-                    </div>
+            </div>
+            <v-row>
+                <v-col cols="6" md="6">
+                    <v-select label="Security Installed" :items="['Defender', 'Kaspersky', 'End-point', 'Avast']"
+                        prepend-inner-icon="mdi-map-marker-outline" variant="outlined" density="comfortable"
+                        :rules="[required]" />
                 </v-col>
+                <v-col cols="6" md="6"">
+                                    <v-select label=" Type" :items="['Built-in', 'Subscription', 'Free/Open Source']"
+                    prepend-inner-icon="mdi-map-marker-outline" variant="outlined" density="comfortable"
+                    :rules="[required]" />
+                </v-col>
+            </v-row>
+            </v-card-text>
+            </v-card>
+            </v-col>
+            <!-- Assignment -->
+            <v-col cols="4" md="5" v-if="formData.status == 'assigned'">
+                <v-card elevation="1" rounded="lg" height="100%">
+                    <v-card-title class="d-flex align-center pa-5">
+                        <v-avatar color="secondary" variant="tonal" size="42" class="mr-3">
+                            <v-icon>mdi-office-building-outline</v-icon>
+                        </v-avatar>
+
+                        <div>
+                            <div class="text-subtitle-1 font-weight-bold">
+                                Assignment
+                            </div>
+
+                            <div class="text-caption text-medium-emphasis">
+                                Where the asset is assigned
+                            </div>
+                        </div>
+                    </v-card-title>
+
+                    <v-divider />
+
+                    <v-card-text class="pa-5">
+                        <v-select v-model="formData.department_id" label="Department / Office" :items="departments"
+                            item-title="name" item-value="id" prepend-inner-icon="mdi-domain" variant="outlined"
+                            density="comfortable" :rules="[required]" class="mb-3" />
+
+                        <v-select v-model="formData.location_id" label="Location / Room" :items="locations"
+                            item-title="name" item-value="id" prepend-inner-icon="mdi-map-marker-outline"
+                            variant="outlined" density="comfortable" :rules="[required]" class="mb-3" />
+
+                        <v-text-field label="End-User" placeholder="Name of personnel"
+                            prepend-inner-icon="mdi-account-outline" variant="outlined" density="comfortable" />
+                    </v-card-text>
+                </v-card>
+            </v-col>
+
+            <v-col cols="12" md="5">
+                <v-card elevation="1" rounded="lg">
+                    <v-card-title class="d-flex align-center pa-5">
+                        <v-avatar color="warning" variant="tonal" size="42" class="mr-3">
+                            <v-icon>mdi-clipboard-check-outline</v-icon>
+                        </v-avatar>
+
+                        <div>
+                            <div class="text-subtitle-1 font-weight-bold">
+                                Status & Condition
+                            </div>
+
+                            <div class="text-caption text-medium-emphasis">
+                                Current operational status of the asset
+                            </div>
+                        </div>
+                    </v-card-title>
+
+                    <v-divider />
+
+                    <v-card-text class="pa-5">
+                        <v-row>
+                            <v-col cols="12" md="12">
+                                <v-select v-model="formData.status" label="Status" :items="statuses"
+                                    prepend-inner-icon="mdi-list-status" variant="outlined" density="comfortable"
+                                    :rules="[required]" />
+                            </v-col>
+
+                            <v-col cols="12" md="12">
+                                <v-select v-model="formData.condition" label="Condition" :items="conditions"
+                                    prepend-inner-icon="mdi-check-circle-outline" variant="outlined"
+                                    density="comfortable" :rules="[required]" />
+                            </v-col>
+
+                            <v-col cols="12" md="12">
+                                <v-text-field v-model="formData.remarks" label="Remarks"
+                                    placeholder="Additional remarks" prepend-inner-icon="mdi-note-text-outline"
+                                    variant="outlined" density="comfortable" />
+                            </v-col>
+                        </v-row>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+
+            <!-- Acquisition -->
+            <v-col cols="12" md="6">
+                <v-card elevation="1" rounded="lg" height="100%">
+                    <v-card-title class="d-flex align-center pa-5">
+                        <v-avatar color="success" variant="tonal" size="42" class="mr-3">
+                            <v-icon>mdi-cart-outline</v-icon>
+                        </v-avatar>
+
+                        <div>
+                            <div class="text-subtitle-1 font-weight-bold">
+                                Acquisition
+                            </div>
+
+                            <div class="text-caption text-medium-emphasis">
+                                Purchase and warranty information
+                            </div>
+                        </div>
+                    </v-card-title>
+
+                    <v-divider />
+
+                    <v-card-text class="pa-5">
+                        <v-text-field v-model="formData.supplier_id" label="Supplier" placeholder="Supplier / Vendor"
+                            prepend-inner-icon="mdi-store-outline" variant="outlined" density="comfortable"
+                            class="mb-3" />
+
+                        <v-text-field v-model.number="formData.unit_cost" label="Unit Cost" type="number" min="0"
+                            prefix="₱" prepend-inner-icon="mdi-cash" variant="outlined" density="comfortable"
+                            class="mb-3" />
+
+                        <v-text-field v-model="formData.purchase_date" label="Purchase Date" type="date"
+                            prepend-inner-icon="mdi-calendar-outline" variant="outlined" density="comfortable"
+                            class="mb-3" />
+
+                        <v-text-field v-model="formData.warranty_expiry" label="Warranty Expiry" type="date"
+                            prepend-inner-icon="mdi-calendar-clock-outline" variant="outlined" density="comfortable" />
+                    </v-card-text>
+                </v-card>
+            </v-col>
+
+            <!-- Status and Condition -->
+
+
+            <!-- Bottom Actions -->
+            <v-col cols="12">
+                <div class="d-flex justify-end ga-2">
+                    <v-btn variant="outlined" @click="goBack">
+                        Cancel
+                    </v-btn>
+
+                    <v-btn color="primary" prepend-icon="mdi-content-save" :loading="saving" @click="createAsset">
+                        Save Asset
+                    </v-btn>
+                </div>
+            </v-col>
             </v-row>
         </v-form>
 
@@ -305,7 +378,7 @@ const getNextAssetTag = async () => {
     const response = await api.get('/assets/next-number')
 
     generatedAssetTag.value = response.data.asset_tag
-   //formData.asset_tag.value = response.data.asset_tag
+    //formData.asset_tag.value = response.data.asset_tag
     console.log(formData.asset_tag)
     console.log(generatedAssetTag.value)
 }
@@ -320,12 +393,17 @@ const createAsset = async () => {
     loading.value = true
     errorMessage.value = ''
     successMessage.value = ''
-
+    
     try {
+        formData.value.asset_tag = generatedAssetTag.value
+        console.log(generatedAssetTag.value)
+        console.log(formData.value.asset_tag )
         const response = await api.post('/assets', formData.value)
 
 
         saving.value = true
+
+        
         successMessage.value = 'Asset created successfully.'
         await new Promise(resolve => setTimeout(resolve, 800));
 

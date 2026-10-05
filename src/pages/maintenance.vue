@@ -106,7 +106,7 @@
             <div class="text-caption text-medium-emphasis">
               {{ item.item_name }}
             </div>
-            
+
           </div>
         </template>
 
@@ -414,7 +414,7 @@
             Cancel
           </v-btn>
 
-          <v-btn color="error" prepend-icon="mdi-delete-outline" @click="deleteAsset(selectedRecord)">
+          <v-btn color="error" prepend-icon="mdi-delete-outline" @click="confirmDelete(selectedRecord)">
             Delete
           </v-btn>
         </v-card-actions>
@@ -780,7 +780,8 @@ const deleteRecord = record => {
   deleteDialog.value = true
 }
 
-const confirmDelete = () => {
+const confirmDelete = async (asset) => {
+  await api.delete(`/maintenance/${asset.id}`)
   records.value = records.value.filter(
     item => item.id !== selectedRecord.value.id
   )
@@ -795,9 +796,16 @@ const confirmDelete = () => {
   selectedRecord.value = null
 }
 
-const deleteAsset = async (asset) => {
+/* const deleteAsset = async (asset) => {
   try {
     await api.delete(`/maintenance/${asset.id}`)
+
+    assets.value = assets.value.filter(
+      item => item.id !== asset.id
+    )
+
+    alert('Record deleted successfully.')
+    deleteDialog.value = false
     router.push('/dashboard/maintenance')
   } catch (error) {
     console.error('Failed to delete asset:', error)
@@ -807,7 +815,7 @@ const deleteAsset = async (asset) => {
       'Failed to delete asset.'
     )
   }
-}
+} */
 const saveRecord = async () => {
   if (!formData.value.asset_id) {
     showSnackbar(

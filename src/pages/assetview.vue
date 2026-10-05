@@ -8,7 +8,7 @@ import api from '@/api/axios'
 
 const route = useRoute()
 const router = useRouter()
-
+const generatingLabel = ref(false)
 const loading = ref(false)
 const errorMessage = ref('')
 const loadingAsset = ref(false)
@@ -190,6 +190,7 @@ const formatCurrency = value => {
     }).format(value)
 }
 const printPropertyLabel = async () => {
+    generatingLabel.value = true
 
     try {
 
@@ -217,6 +218,9 @@ const printPropertyLabel = async () => {
             'Failed to generate property label:',
             error
         )
+
+    } finally {
+        generatingLabel.value = false
 
     }
 
@@ -417,6 +421,7 @@ const printPropertyLabel = async () => {
 
                 </v-card>
 
+
                 <!-- ===================================================== -->
                 <!-- SPECIFICATIONS -->
                 <!-- ===================================================== -->
@@ -459,9 +464,9 @@ const printPropertyLabel = async () => {
 
                         <v-spacer />
 
-                        <v-btn variant="tonal" color="primary" prepend-icon="mdi-plus" to="/maintenance">
+                        <!--  <v-btn variant="tonal" color="primary" prepend-icon="mdi-plus" to="/maintenance">
                             Add Record
-                        </v-btn>
+                        </v-btn> -->
 
                     </v-card-title>
 
@@ -472,11 +477,11 @@ const printPropertyLabel = async () => {
                         <v-timeline-item v-for="item in maintenanceRecords" :key="item.id" dot-color="primary"
                             size="small">
 
-                            <template #opposite>
+                            <!--  <template #opposite>
                                 <span class="text-caption">
                                     {{ item.date_started }}
                                 </span>
-                            </template>
+                            </template> -->
 
                             <div>
 
@@ -500,9 +505,11 @@ const printPropertyLabel = async () => {
                                 </div>
 
                                 <div class="text-caption text-medium-emphasis mt-1">
-                                    Technician: {{ item.technician_id }}
+                                    Date Reported: {{ item.date_reported }}
                                 </div>
-
+                                <div class="text-caption text-medium-emphasis mt-1">
+                                    Date Fixed: {{ item.date_completed }}
+                                </div>
                             </div>
 
                         </v-timeline-item>
@@ -518,6 +525,48 @@ const printPropertyLabel = async () => {
             <!-- ======================================================= -->
 
             <v-col cols="12" lg="4">
+                <v-card rounded="lg" elevation="1" class="mb-4">
+
+                    <v-card-title class="pa-5">
+                        Software Installed/Subscribed
+                    </v-card-title>
+
+                    <v-divider />
+
+                    <v-card-text class="pa-5">
+
+                        <div class="detail-row">
+                            <v-icon icon="mdi-computer" color="primary" />
+
+                            <div>
+                                <div class="info-label">
+                                    Operating System
+                                </div>
+
+                                <div class="info-value">
+                                    {{ formData.department_id }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-row">
+                            <v-icon icon="mdi-map-marker-outline" color="primary" />
+
+                            <div>
+                                <div class="info-label">
+                                    Software/s Installed
+                                </div>
+
+                                <div class="info-value">
+                                    {{ formData.location_id }}
+                                </div>
+                            </div>
+                        </div>
+
+                    </v-card-text>
+
+                </v-card>
+
 
                 <!-- Location -->
 
@@ -770,9 +819,25 @@ const printPropertyLabel = async () => {
                         <!-- PROPERTY DETAILS -->
 
                     </div>
-                </v-card-text> <!-- Print --> <v-card-actions class="pa-5 pt-0"> <v-btn block variant="tonal"
-                        color="primary" prepend-icon="mdi-printer" @click="printPropertyLabel"> Print QR Code </v-btn>
-                </v-card-actions> </v-card>
+                </v-card-text> <!-- Print -->
+                <v-card-actions class="pa-5 pt-0">
+                    <!-- <v-btn block variant="tonal" color="primary" prepend-icon="mdi-printer" @click="printPropertyLabel">
+                        Print QR Code
+                    </v-btn> -->
+                    <v-btn block variant="tonal" color="primary" :disabled="generatingLabel"
+                        @click="printPropertyLabel">
+                        <template v-if="generatingLabel">
+                            <v-progress-circular indeterminate size="20" width="2" class="mr-2" />
+                            Generating QR Code...
+                        </template>
+
+                        <template v-else>
+                            <v-icon start>mdi-printer</v-icon>
+                            Print QR Code
+                        </template>
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
 
         </v-dialog>
     </v-container>

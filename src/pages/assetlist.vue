@@ -314,10 +314,10 @@ const formatCurrency = value => {
 
 const statusColor = status => {
     switch (status) {
-        case 'Serviceable':
+        case 'available':
             return 'success'
 
-        case 'Under Repair':
+        case 'under_maintenance':
             return 'warning'
 
         case 'Unserviceable':
@@ -385,7 +385,7 @@ const deleteAsset = async (asset) => {
 
         alert('Asset deleted successfully.')
         showDeleteDialog.value = false
-    } catch (error) {
+    } catch (error) { 
         console.error('Failed to delete asset:', error)
 
         alert(

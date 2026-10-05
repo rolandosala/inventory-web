@@ -190,16 +190,8 @@ const statusColor = status => {
 
     <v-row>
       <!-- Total -->
-      <v-col
-        cols="12"
-        sm="6"
-        lg="3"
-      >
-        <v-card
-          rounded="lg"
-          elevation="1"
-          class="stat-card"
-        >
+      <v-col cols="12" sm="6" lg="3">
+        <v-card rounded="lg" elevation="1" class="stat-card">
           <v-card-text class="pa-5">
             <div class="d-flex justify-space-between">
               <div>
@@ -211,20 +203,13 @@ const statusColor = status => {
                   {{ stats.total.toLocaleString() }}
                 </div>
 
-                <div class="text-caption text-medium-emphasis mt-2">
+                <!-- <div class="text-caption text-medium-emphasis mt-2">
                   All registered ICT assets
-                </div>
+                </div> -->
               </div>
 
-              <v-avatar
-                color="primary"
-                variant="tonal"
-                size="50"
-              >
-                <v-icon
-                  icon="mdi-package-variant-closed"
-                  size="26"
-                />
+              <v-avatar color="primary" variant="tonal" size="50">
+                <v-icon icon="mdi-package-variant-closed" size="26" />
               </v-avatar>
             </div>
           </v-card-text>
@@ -232,16 +217,8 @@ const statusColor = status => {
       </v-col>
 
       <!-- Serviceable -->
-      <v-col
-        cols="12"
-        sm="6"
-        lg="3"
-      >
-        <v-card
-          rounded="lg"
-          elevation="1"
-          class="stat-card"
-        >
+      <v-col cols="12" sm="6" lg="3">
+        <v-card rounded="lg" elevation="1" class="stat-card">
           <v-card-text class="pa-5">
             <div class="d-flex justify-space-between">
               <div>
@@ -253,21 +230,14 @@ const statusColor = status => {
                   {{ stats.serviceable.toLocaleString() }}
                 </div>
 
-                <div class="text-caption text-success mt-2">
+                <!--  <div class="text-caption text-success mt-2">
                   {{ Math.round((stats.serviceable / stats.total) * 100) }}%
                   of inventory
-                </div>
+                </div> -->
               </div>
 
-              <v-avatar
-                color="success"
-                variant="tonal"
-                size="50"
-              >
-                <v-icon
-                  icon="mdi-check-circle-outline"
-                  size="26"
-                />
+              <v-avatar color="success" variant="tonal" size="50">
+                <v-icon icon="mdi-check-circle-outline" size="26" />
               </v-avatar>
             </div>
           </v-card-text>
@@ -275,16 +245,8 @@ const statusColor = status => {
       </v-col>
 
       <!-- Unserviceable -->
-      <v-col
-        cols="12"
-        sm="6"
-        lg="3"
-      >
-        <v-card
-          rounded="lg"
-          elevation="1"
-          class="stat-card"
-        >
+      <v-col cols="12" sm="6" lg="3">
+        <v-card rounded="lg" elevation="1" class="stat-card">
           <v-card-text class="pa-5">
             <div class="d-flex justify-space-between">
               <div>
@@ -296,20 +258,13 @@ const statusColor = status => {
                   {{ stats.unserviceable.toLocaleString() }}
                 </div>
 
-                <div class="text-caption text-error mt-2">
+                <!-- <div class="text-caption text-error mt-2">
                   Requires attention
-                </div>
+                </div> -->
               </div>
 
-              <v-avatar
-                color="error"
-                variant="tonal"
-                size="50"
-              >
-                <v-icon
-                  icon="mdi-alert-circle-outline"
-                  size="26"
-                />
+              <v-avatar color="error" variant="tonal" size="50">
+                <v-icon icon="mdi-alert-circle-outline" size="26" />
               </v-avatar>
             </div>
           </v-card-text>
@@ -317,16 +272,8 @@ const statusColor = status => {
       </v-col>
 
       <!-- Repair -->
-      <v-col
-        cols="12"
-        sm="6"
-        lg="3"
-      >
-        <v-card
-          rounded="lg"
-          elevation="1"
-          class="stat-card"
-        >
+      <v-col cols="12" sm="6" lg="3">
+        <v-card rounded="lg" elevation="1" class="stat-card">
           <v-card-text class="pa-5">
             <div class="d-flex justify-space-between">
               <div>
@@ -338,20 +285,13 @@ const statusColor = status => {
                   {{ stats.repair.toLocaleString() }}
                 </div>
 
-                <div class="text-caption text-warning mt-2">
+                <!-- <div class="text-caption text-warning mt-2">
                   Currently being serviced
-                </div>
+                </div> -->
               </div>
 
-              <v-avatar
-                color="warning"
-                variant="tonal"
-                size="50"
-              >
-                <v-icon
-                  icon="mdi-wrench-outline"
-                  size="26"
-                />
+              <v-avatar color="warning" variant="tonal" size="50">
+                <v-icon icon="mdi-wrench-outline" size="26" />
               </v-avatar>
             </div>
           </v-card-text>
@@ -365,15 +305,8 @@ const statusColor = status => {
 
     <v-row class="mt-5">
 
-      <v-col
-        cols="12"
-        md="8"
-      >
-        <v-card
-          rounded="lg"
-          elevation="1"
-          color="primary"
-        >
+      <!-- <v-col cols="12" md="8">
+        <v-card rounded="lg" elevation="1" color="primary">
           <v-card-text class="pa-6">
             <div class="d-flex align-center justify-space-between">
 
@@ -391,60 +324,35 @@ const statusColor = status => {
                 </div>
               </div>
 
-              <v-icon
-                icon="mdi-cash-multiple"
-                size="64"
-                class="opacity-60 d-none d-sm-block"
-              />
+              <v-icon icon="mdi-cash-multiple" size="64" class="opacity-60 d-none d-sm-block" />
             </div>
           </v-card-text>
         </v-card>
-      </v-col>
+      </v-col> -->
 
-      <v-col
-        cols="12"
-        md="4"
-      >
-        <v-card
-          rounded="lg"
-          elevation="1"
-          height="100%"
-        >
-          <v-card-text class="pa-6">
-
-            <div class="d-flex align-center">
-              <v-avatar
-                color="warning"
-                variant="tonal"
-                size="48"
-              >
-                <v-icon icon="mdi-calendar-alert-outline" />
-              </v-avatar>
-
-              <div class="ml-4">
+      
+      <v-col cols="12" sm="6" lg="3">
+        <v-card rounded="lg" elevation="1" class="stat-card">
+          <v-card-text class="pa-5">
+            <div class="d-flex justify-space-between">
+              <div>
                 <div class="text-body-2 text-medium-emphasis">
-                  Warranty Expiring
+                  License OS
                 </div>
 
-                <div class="text-h4 font-weight-bold">
-                  {{ stats.warrantyExpiring }}
+                <div class="text-h4 font-weight-bold mt-2">
+                  {{ stats.repair.toLocaleString() }}
                 </div>
+
+                <!-- <div class="text-caption text-warning mt-2">
+                  Currently being serviced
+                </div> -->
               </div>
+
+              <v-avatar color="warning" variant="tonal" size="50">
+                <v-icon icon="mdi-wrench-outline" size="26" />
+              </v-avatar>
             </div>
-
-            <v-btn
-              variant="text"
-              color="warning"
-              class="px-0 mt-3"
-              to="/assets"
-            >
-              View Assets
-              <v-icon
-                icon="mdi-arrow-right"
-                end
-              />
-            </v-btn>
-
           </v-card-text>
         </v-card>
       </v-col>
@@ -458,15 +366,8 @@ const statusColor = status => {
     <v-row class="mt-1">
 
       <!-- Categories -->
-      <v-col
-        cols="12"
-        lg="6"
-      >
-        <v-card
-          rounded="lg"
-          elevation="1"
-          height="100%"
-        >
+      <v-col cols="12" lg="6">
+        <v-card rounded="lg" elevation="1" height="100%">
           <v-card-title class="pa-5">
             <div>
               <div class="text-h6 font-weight-bold">
@@ -481,11 +382,7 @@ const statusColor = status => {
 
           <v-card-text class="px-5 pb-5">
 
-            <div
-              v-for="category in categories"
-              :key="category.name"
-              class="mb-4"
-            >
+            <div v-for="category in categories" :key="category.name" class="mb-4">
               <div class="d-flex justify-space-between mb-1">
                 <span class="text-body-2">
                   {{ category.name }}
@@ -496,12 +393,8 @@ const statusColor = status => {
                 </span>
               </div>
 
-              <v-progress-linear
-                :model-value="(category.count / maxCategoryCount) * 100"
-                color="primary"
-                height="8"
-                rounded
-              />
+              <v-progress-linear :model-value="(category.count / maxCategoryCount) * 100" color="primary" height="8"
+                rounded />
             </div>
 
           </v-card-text>
@@ -509,15 +402,8 @@ const statusColor = status => {
       </v-col>
 
       <!-- Departments -->
-      <v-col
-        cols="12"
-        lg="6"
-      >
-        <v-card
-          rounded="lg"
-          elevation="1"
-          height="100%"
-        >
+      <v-col cols="12" lg="6">
+        <v-card rounded="lg" elevation="1" height="100%">
           <v-card-title class="pa-5">
             <div>
               <div class="text-h6 font-weight-bold">
@@ -532,11 +418,7 @@ const statusColor = status => {
 
           <v-card-text class="px-5 pb-5">
 
-            <div
-              v-for="department in departments"
-              :key="department.name"
-              class="mb-4"
-            >
+            <div v-for="department in departments" :key="department.name" class="mb-4">
               <div class="d-flex justify-space-between mb-1">
                 <span class="text-body-2">
                   {{ department.name }}
@@ -547,12 +429,8 @@ const statusColor = status => {
                 </span>
               </div>
 
-              <v-progress-linear
-                :model-value="(department.count / maxDepartmentCount) * 100"
-                color="secondary"
-                height="8"
-                rounded
-              />
+              <v-progress-linear :model-value="(department.count / maxDepartmentCount) * 100" color="secondary"
+                height="8" rounded />
             </div>
 
           </v-card-text>
@@ -567,14 +445,8 @@ const statusColor = status => {
 
     <v-row class="mt-1">
 
-      <v-col
-        cols="12"
-        lg="8"
-      >
-        <v-card
-          rounded="lg"
-          elevation="1"
-        >
+      <v-col cols="12" lg="8">
+        <v-card rounded="lg" elevation="1">
 
           <v-card-title class="d-flex align-center pa-5">
 
@@ -590,11 +462,7 @@ const statusColor = status => {
 
             <v-spacer />
 
-            <v-btn
-              variant="text"
-              color="primary"
-              to="/assets"
-            >
+            <v-btn variant="text" color="primary" to="/assets">
               View All
             </v-btn>
 
@@ -618,10 +486,7 @@ const statusColor = status => {
             </thead>
 
             <tbody>
-              <tr
-                v-for="asset in recentAssets"
-                :key="asset.id"
-              >
+              <tr v-for="asset in recentAssets" :key="asset.id">
                 <td>
                   <span class="font-weight-medium">
                     {{ asset.assetTag }}
@@ -641,11 +506,7 @@ const statusColor = status => {
                 </td>
 
                 <td>
-                  <v-chip
-                    :color="statusColor(asset.status)"
-                    size="small"
-                    variant="tonal"
-                  >
+                  <v-chip :color="statusColor(asset.status)" size="small" variant="tonal">
                     {{ asset.status }}
                   </v-chip>
                 </td>
@@ -660,15 +521,8 @@ const statusColor = status => {
       <!-- MAINTENANCE -->
       <!-- ======================================================= -->
 
-      <v-col
-        cols="12"
-        lg="4"
-      >
-        <v-card
-          rounded="lg"
-          elevation="1"
-          height="100%"
-        >
+      <v-col cols="12" lg="4">
+        <v-card rounded="lg" elevation="1" height="100%">
 
           <v-card-title class="pa-5">
             <div>
@@ -686,19 +540,11 @@ const statusColor = status => {
 
           <v-list lines="two">
 
-            <v-list-item
-              v-for="item in maintenance"
-              :key="item.id"
-              class="py-3"
-            >
+            <v-list-item v-for="item in maintenance" :key="item.id" class="py-3">
 
               <template #prepend>
 
-                <v-avatar
-                  color="warning"
-                  variant="tonal"
-                  size="42"
-                >
+                <v-avatar color="warning" variant="tonal" size="42">
                   <v-icon icon="mdi-wrench-outline" />
                 </v-avatar>
 
@@ -723,12 +569,7 @@ const statusColor = status => {
           </v-list>
 
           <v-card-actions class="pa-4">
-            <v-btn
-              block
-              variant="tonal"
-              color="primary"
-              to="/maintenance"
-            >
+            <v-btn block variant="tonal" color="primary" to="/maintenance">
               View Maintenance
             </v-btn>
           </v-card-actions>
