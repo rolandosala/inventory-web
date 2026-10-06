@@ -611,7 +611,7 @@ const locations = [
 ]
 
 const statuses = [
-    'available', 'assigned', 'in_storage', 'under_maintenance', 'lost', 'damaged', 'for disposal', 'disposed', 'retired'
+    'available', 'assigned', 'in_storage', 'under_maintenance', 'lost', 'disposed', 'return to supply', 'for checking'
 ]
 
 const conditions = [

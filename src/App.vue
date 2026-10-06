@@ -6,6 +6,11 @@
   </v-app>
 </template>
 
-<script lang="ts" setup>
-  //
+<script setup>
+import { onMounted } from 'vue'
+import { startSessionTimeout } from '@/plugins/sessionTimeout'
+
+onMounted(() => {
+  startSessionTimeout()
+})
 </script>
