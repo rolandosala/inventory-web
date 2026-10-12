@@ -207,11 +207,11 @@
 
                     <v-card-text class="pa-5">
                         <v-select v-model="formData.department_id" label="Department / Office" :items="departments"
-                            item-title="name" item-value="id" prepend-inner-icon="mdi-domain" variant="outlined"
+                            item-title="code" item-value="id" prepend-inner-icon="mdi-domain" variant="outlined"
                             density="comfortable" :rules="[required]" class="mb-3" />
 
                         <v-select v-model="formData.location_id" label="Location / Room" :items="locations"
-                            item-title="name" item-value="id" prepend-inner-icon="mdi-map-marker-outline"
+                            item-title="building" item-value="id" prepend-inner-icon="mdi-map-marker-outline"
                             variant="outlined" density="comfortable" :rules="[required]" class="mb-3" />
 
                         <v-text-field label="End-User" placeholder="Name of personnel"
@@ -382,10 +382,7 @@ const getNextAssetTag = async () => {
     console.log(formData.asset_tag)
     console.log(generatedAssetTag.value)
 }
-onMounted(() => {
-    getNextAssetTag()
-})
-console.log(generatedAssetTag.value)
+
 const loading = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
@@ -393,17 +390,17 @@ const createAsset = async () => {
     loading.value = true
     errorMessage.value = ''
     successMessage.value = ''
-    
+
     try {
         formData.value.asset_tag = generatedAssetTag.value
         console.log(generatedAssetTag.value)
-        console.log(formData.value.asset_tag )
+        console.log(formData.value.asset_tag)
         const response = await api.post('/assets', formData.value)
 
 
         saving.value = true
 
-        
+
         successMessage.value = 'Asset created successfully.'
         await new Promise(resolve => setTimeout(resolve, 800));
 
@@ -524,7 +521,7 @@ const categories = [
     },
 ]
 
-const departments = [
+/* const departments = [
     {
         id: 1,
         name: 'ICT Office',
@@ -565,9 +562,35 @@ const departments = [
         id: 10,
         name: 'Student Affairs',
     },
-]
+] */
+const departments = ref([])
+const fetchDepartments = async () => {
+    try {
+        const response = await api.get('/departments')
 
-const locations = [
+        departments.value = response.data.data
+    } catch (error) {
+        console.error('Failed to load assets:', error)
+    } finally {
+        loading.value = false
+    }
+}
+const locations = ref([]);
+const fetchLocations = async () => {
+
+
+    try {
+        const response = await api.get('/locations')
+
+        locations.value = response.data.data
+    } catch (error) {
+        console.error('Failed to load assets:', error)
+    } finally {
+        loading.value = false
+    }
+}
+
+/* const locations = [
     {
         id: 1,
         name: 'ICT Office',
@@ -608,7 +631,7 @@ const locations = [
         id: 10,
         name: 'Faculty Room',
     },
-]
+] */
 
 const statuses = [
     'available', 'assigned', 'in_storage', 'under_maintenance', 'lost', 'disposed', 'return to supply', 'for checking'
@@ -656,7 +679,11 @@ const saveAsset = async () => {
         nextNumber.value += 1
     }, 1000)
 }
-
+onMounted(() => {
+    getNextAssetTag()
+    fetchDepartments()
+    fetchLocations()
+})
 
 </script>
 ```

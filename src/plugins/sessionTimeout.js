@@ -1,7 +1,7 @@
 import router from '@/router'
 import api from '@/api/axios'
 
-const TIMEOUT = 30 *  60 * 1000 // 30 minutes
+const TIMEOUT =  30 * 60 * 1000 // 30 minutes
 
 let timeoutId = null
 
