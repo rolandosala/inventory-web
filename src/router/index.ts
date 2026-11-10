@@ -80,6 +80,11 @@ const router = createRouter({
           name: 'suppliers',
           component: () => import('@/pages/suppliers.vue'),
         },
+        {
+          path: 'borrowers_log',
+          name: 'borrowers_log',
+          component: () => import('@/pages/borrowers_log.vue'),
+        },
 
         {
           path: 'software',

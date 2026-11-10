@@ -35,6 +35,7 @@ const formData = ref({
     status: 'active',
     condition: 'good',
     remarks: '',
+    fund_source: ''
 })
 const fetchAsset = async () => {
     loadingAsset.value = true
@@ -70,6 +71,7 @@ const fetchAsset = async () => {
             status: assets.status ?? 'active',
             condition: assets.condition ?? 'good',
             remarks: assets.remarks ?? '',
+            fund_source: assets.fund_source ?? ''
         }
 
 
@@ -303,6 +305,9 @@ const printPropertyLabel = async () => {
                             {{ formData.status }}
                         </v-chip>
 
+                        <v-chip  variant="tonal" class="mb-2">
+                            Fund Source: {{ formData.fund_source }}
+                        </v-chip>
                         <!-- <v-chip :color="conditionColor(formData.condition)" variant="outlined" size="small">
                             {{ formData.condition }}
                         </v-chip> -->

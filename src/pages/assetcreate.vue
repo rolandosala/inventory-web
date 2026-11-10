@@ -242,6 +242,11 @@
 
                     <v-card-text class="pa-5">
                         <v-row>
+                        <v-col cols="12" md="12">
+                                <v-select v-model="formData.fund_source" label="Fund Source" :items="['TRF', 'IGF', 'RAF']"
+                                    prepend-inner-icon="mdi-list-status" variant="outlined" density="comfortable"
+                                    :rules="[required]" />
+                            </v-col>
                             <v-col cols="12" md="12">
                                 <v-select v-model="formData.status" label="Status" :items="statuses"
                                     prepend-inner-icon="mdi-list-status" variant="outlined" density="comfortable"
@@ -373,6 +378,7 @@ const formData = ref({
     status: '',
     condition: '',
     remarks: '',
+    fund_source: ''
 })
 const getNextAssetTag = async () => {
     const response = await api.get('/assets/next-number')
@@ -433,6 +439,7 @@ const createAsset = async () => {
             status: 'active',
             condition: 'good',
             remarks: '',
+            fund_source: ''
         }
 
     } catch (error) {
@@ -476,6 +483,7 @@ const asset = ref({
     status: 'Serviceable',
     condition: 'Good',
     remarks: '',
+    fund_source: ''
 })
 
 const categories = [

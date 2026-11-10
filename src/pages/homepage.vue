@@ -54,6 +54,11 @@ const menuItems = [
         icon: 'mdi-truck-outline',
         to: 'suppliers',
     },
+    {
+        title: 'Borrowers Log',
+        icon: 'mdi-clipboard-list-outline',
+        to: 'borrowers_log',
+    }
 ]
 
 const systemItems = [

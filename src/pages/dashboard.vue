@@ -1,6 +1,8 @@
 ```vue
 <script setup>
-import { computed } from 'vue'
+import api from '@/api/axios'
+import { computed, onMounted, ref } from 'vue'
+const assets = ref([])
 
 /*
 |--------------------------------------------------------------------------
@@ -10,7 +12,23 @@ import { computed } from 'vue'
 | Later, this can be replaced with Laravel API data.
 |--------------------------------------------------------------------------
 */
+const fetchAssets = async () => {
+    try {
+        const response = await api.get('/assets')
+        assets.value = response.data.data
+    } catch (error) {
+        console.error('Failed to load assets:', error)
+    }
+}
 
+onMounted(() => {
+    fetchAssets()
+})
+
+const totalAssets = computed(() => assets.value.length)
+const serviceableAssets = computed(() => assets.value.filter( asset => asset.status === 'available',).length,)
+const unserviceableAssets = computed(() => assets.value.filter( asset => asset.status === 'unserviceable', ).length,)
+const repairAssets = computed(() => assets.value.filter( asset => asset.status === 'under_maintenance',).length,)
 const stats = {
   total: 245,
   serviceable: 218,
@@ -200,7 +218,7 @@ const statusColor = status => {
                 </div>
 
                 <div class="text-h4 font-weight-bold mt-2">
-                  {{ stats.total.toLocaleString() }}
+                  {{ totalAssets}}
                 </div>
 
                 <!-- <div class="text-caption text-medium-emphasis mt-2">
@@ -227,7 +245,7 @@ const statusColor = status => {
                 </div>
 
                 <div class="text-h4 font-weight-bold mt-2">
-                  {{ stats.serviceable.toLocaleString() }}
+                  {{ serviceableAssets }}
                 </div>
 
                 <!--  <div class="text-caption text-success mt-2">
@@ -255,7 +273,7 @@ const statusColor = status => {
                 </div>
 
                 <div class="text-h4 font-weight-bold mt-2">
-                  {{ stats.unserviceable.toLocaleString() }}
+                  {{ unserviceableAssets }}
                 </div>
 
                 <!-- <div class="text-caption text-error mt-2">
@@ -282,7 +300,7 @@ const statusColor = status => {
                 </div>
 
                 <div class="text-h4 font-weight-bold mt-2">
-                  {{ stats.repair.toLocaleString() }}
+                  {{ repairAssets }}
                 </div>
 
                 <!-- <div class="text-caption text-warning mt-2">
