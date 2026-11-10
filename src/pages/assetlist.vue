@@ -246,10 +246,10 @@ const filteredAssets = computed(() => {
             !query ||
             asset.asset_tag.toLowerCase().includes(query) ||
             asset.property_number.toLowerCase().includes(query) ||
-            asset.item_name.toLowerCase().includes(query) ||
-            asset.brand.toLowerCase().includes(query) ||
-            asset.model.toLowerCase().includes(query) ||
-            asset.serial_number.toLowerCase().includes(query)
+            asset.item_name.toLowerCase().includes(query)
+            //asset.brand.toLowerCase().includes(query) ||
+            //asset.model.toLowerCase().includes(query) ||
+            //asset.serial_number.toLowerCase().includes(query)
 
         const matchesStatus =
             statusFilter.value === 'All' ||
